@@ -1,0 +1,31 @@
+# source file https://raw.githubusercontent.com/airsonic/airsonic/master/contrib/airsonic.service
+# install documentation : https://airsonic.github.io/docs/install/war-standalone/
+
+[Unit]
+Description=__APP__ Media Server
+After=remote-fs.target network.target
+AssertPathExists=__FINALPATH__
+
+[Service]
+Type=simple
+Environment="JAVA_JAR=/var/airsonic/airsonic.war"
+Environment="JAVA_OPTS=-Xmx700m"
+Environment="AIRSONIC_HOME=/var/airsonic"
+Environment="PORT=8080"
+Environment="CONTEXT_PATH=/airsonic"
+Environment="JAVA_ARGS="
+EnvironmentFile=-/etc/default/airsonic
+ExecStart=/usr/bin/java \
+          $JAVA_OPTS \
+          -Dairsonic.home=${AIRSONIC_HOME} \
+          -Dserver.context-path=${CONTEXT_PATH} \
+          -Dserver.port=${PORT} \
+          -jar ${JAVA_JAR} $JAVA_ARGS
+User=__APP__
+Group=__APP__
+
+# Force systemd to wait XX sec for the process to start before killing it
+# TimeoutStopSec= 180
+
+[Install]
+WantedBy=multi-user.target

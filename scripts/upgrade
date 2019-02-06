@@ -1,0 +1,175 @@
+#!/bin/bash
+
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# LOAD SETTINGS
+#=================================================
+
+app=$YNH_APP_INSTANCE_NAME
+
+domain=$(ynh_app_setting_get $app domain)
+path_url=$(ynh_app_setting_get $app path)
+admin=$(ynh_app_setting_get $app admin)
+is_public=$(ynh_app_setting_get $app is_public)
+final_path=$(ynh_app_setting_get $app final_path)
+#language=$(ynh_app_setting_get $app language)
+#db_name=$(ynh_app_setting_get $app db_name)
+
+# Custom values out of the manifest
+service_config=$(ynh_app_setting_get $app service_config)
+
+#=================================================
+# ENSURE DOWNWARD COMPATIBILITY
+#=================================================
+
+# If db_name doesn't exist, create it
+if [ -z $db_name ]; then
+	db_name=$(ynh_sanitize_dbid $app)
+	ynh_app_setting_set $app db_name $db_name
+fi
+
+#=================================================
+# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
+#=================================================
+
+# Backup the current version of the app
+ynh_backup_before_upgrade
+ynh_clean_setup () {
+	# restore it if the upgrade fails
+	ynh_restore_upgradebackup
+}
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
+# CHECK THE PATH
+#=================================================
+
+# Normalize the URL path syntax
+path_url=$(ynh_normalize_url_path $path_url)
+
+#=================================================
+# STANDARD UPGRADE STEPS
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+
+# Download, check integrity, uncompress and patch the source from app.src
+ynh_setup_source "$final_path"
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+
+# Create a dedicated nginx config
+ynh_add_nginx_config
+
+#=================================================
+# UPGRADE DEPENDENCIES
+#=================================================
+
+ynh_install_app_dependencies openjdk-8-jre ffmpeg
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+
+# Create a dedicated user (if not existing)
+ynh_system_user_create $app
+
+#=================================================
+# SPECIFIC UPGRADE
+#=================================================
+# INTEGRATE APPLICATION WITH YUNOHOST
+#=================================================
+
+### Verify the checksum of a file, stored by `ynh_store_file_checksum` in the install script.
+### And create a backup of this file if the checksum is different. So the file will be backed up if the admin had modified it.
+
+# Path of the systemd service configuration
+ynh_backup_if_checksum_is_different "$final_path/airsonic.properties"
+
+
+# preload Airsonic configuration with LDAP settings
+# FIXME It does not work at the moment
+# Maybe the settings are wrong or this is an issue with the app itself.
+# Airsonic logs are not verbose enough even in TRACE mode
+# See https://airsonic.github.io/docs/logging/
+
+#cp ../conf/airsonic.properties $final_path/airsonic.properties
+
+
+# Recalculate and store the checksum of the file for the next upgrade.
+ynh_store_file_checksum "$final_path/airsonic.properties"
+
+#=================================================
+# SETUP LOGROTATE
+#=================================================
+
+# Use logrotate to manage app-specific logfile(s)
+#ynh_use_logrotate --non-append   => TODO why no $file? why "--non-append"?
+
+ynh_use_logrotate --non-append $final_path/airsonic.log
+
+#=================================================
+# SETUP SYSTEMD
+#=================================================
+
+# Create a dedicated systemd config
+ynh_add_systemd_config
+
+
+# Backup existing systemd service configuration
+ynh_backup_if_checksum_is_different "$service_config"
+
+
+# Copy config. template to right location
+cp ../conf/systemd-sysconfig $service_config
+
+# Configure the service
+# TODO Config could be done in systemd template directly but documentation says
+# to avoid it. Stick with this config file for now
+ynh_replace_string "__FINALPATH__" "$final_path" "$service_config"
+ynh_replace_string "__PORT__"      "$port"       "$service_config"
+ynh_replace_string "__PATH__"      "$path_url"   "$service_config"
+
+
+# Recalculate and store the checksum of the file for the next upgrade.
+ynh_store_file_checksum "$service_config"
+
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+# SECURE FILES AND DIRECTORIES
+#=================================================
+
+# Set permissions on app files
+chown -R $app: $final_path
+
+#=================================================
+# SETUP SSOWAT
+#=================================================
+
+# Make app public if necessary
+if [ $is_public -eq 1 ]
+then
+	# unprotected_uris allows SSO credentials to be passed anyway
+	ynh_app_setting_set $app unprotected_uris "/"
+fi
+
+#=================================================
+# RELOAD NGINX
+#=================================================
+
+systemctl reload nginx
+
+# Run the app
+systemctl start $app.service

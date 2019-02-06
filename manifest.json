@@ -1,0 +1,75 @@
+{
+    "name": "Airsonic",
+    "id": "airsonic",
+    "packaging_format": 1,
+    "description": {
+        "en": "Airsonic is an open source, web-based media server.",
+        "fr": "Airsonic est un server multimedia open-source."
+    },
+    "version": "10.1.2~ynh1",
+    "url": "http://airsonic.github.io",
+    "license": "GPL-3.0-or-later",
+    "maintainer": {
+        "name": "Gofannon",
+        "email": "gofannon@riseup.net"
+    },
+    "previous_maintainers": [
+    {
+        "name": "XXX",
+        "email": "XXX",
+        "url": "XXX"
+    }
+    ],
+    "requirements": {
+        "yunohost": ">= 3.0"
+    },
+    "multi_instance": true,
+    "services": [
+        "nginx"
+    ],
+    "arguments": {
+        "install" : [
+            {
+                "name": "domain",
+                "type": "domain",
+                "ask": {
+                    "en": "Choose a domain name for Airsonic",
+                    "fr": "Choisissez un nom de domaine pour Airsonic"
+                },
+                "example": "example.com"
+            },
+            {
+                "name": "path",
+                "type": "path",
+                "ask": {
+                    "en": "Choose a path for Airsonic",
+                    "fr": "Choisissez un chemin pour Airsonic"
+                },
+                "example": "/airsonic",
+                "default": "/airsonic"
+            },
+            {
+                "name": "admin",
+                "type": "user",
+                "ask": {
+                    "en": "Choose an admin user",
+                    "fr": "Choisissez l’administrateur"
+                },
+                "help": {
+                    "en": "This user will have full control on this application and will be able to configure it.",
+                    "fr": "Cet utilisateur aura le controle total de l'application et pourra la configurer."
+                },
+                "example": "johndoe"
+            },
+            {
+                "name": "is_public",
+                "type": "boolean",
+                "ask": {
+                    "en": "Is it a public application?",
+                    "fr": "Est-ce une application publique ?"
+                },
+                "default": true
+            }
+        ]
+    }
+}
