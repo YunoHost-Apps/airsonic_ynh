@@ -87,7 +87,7 @@ ynh_install_app_dependencies $pkg_dependencies
 
 ### For details, see https://airsonic.github.io/docs/transcode/
 
-mkdir $final_path/transcode
+mkdir -p $final_path/transcode
 
 if [ -x /usr/bin/ffmpeg ]; then   # Check if 'ffmpeg' is installed and executable
 	ln -s /usr/bin/ffmpeg $final_path/transcode
