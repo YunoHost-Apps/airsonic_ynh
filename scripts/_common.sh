@@ -5,7 +5,7 @@
 #=================================================
 
 # dependencies used by the app
-pkg_dependencies="openjdk-8-jre ffmpeg postgresql-9.6 postgresql-client-9.6 libpostgresql-jdbc-java"
+pkg_dependencies="openjdk-8-jre ffmpeg"
 
 #=================================================
 # PERSONAL HELPERS

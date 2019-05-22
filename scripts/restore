@@ -30,8 +30,6 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-db_user=$db_name
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
@@ -84,13 +82,24 @@ ynh_script_progression --message="Reinstalling dependencies..." --weight=43
 ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
-# RESTORE THE POSTRESQL DATABASE
+# ENABLE "TRANSCODE"
 #=================================================
-ynh_script_progression --message="Restoring the PostgreSQL database..." --weight=5
 
-db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
-ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
-ynh_psql_connect_as --user=$db_user --password=$db_pwd --database=$db_name < ./db.sql
+### For details, see https://airsonic.github.io/docs/transcode/
+
+mkdir $final_path/transcode
+
+if [ -x /usr/bin/ffmpeg ]; then   # Check if 'ffmpeg' is installed and executable
+	ln -s /usr/bin/ffmpeg $final_path/transcode
+fi
+
+# FIXME Not sure if 'lame' is needed ?
+if [ -x /usr/bin/lame ]; then   # Check if 'lame' is installed and executable
+	ln -s /usr/bin/lame $final_path/transcode
+fi
+
+# Ensure links belong to the $app user
+chown $app: $final_path/transcode
 
 #=================================================
 # RESTORE SYSTEMD

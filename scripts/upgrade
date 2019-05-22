@@ -21,8 +21,6 @@ path_url=$(ynh_app_setting_get --app=$app --key=path)
 admin=$(ynh_app_setting_get --app=$app --key=admin)
 is_public=$(ynh_app_setting_get --app=$app --key=is_public)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 port=$(ynh_app_setting_get --app=$app --key=port)
 
 #=================================================
@@ -43,17 +41,6 @@ if [ "$is_public" = "Yes" ]; then
 elif [ "$is_public" = "No" ]; then
 	ynh_app_setting_set --app=$app --key=is_public --value=0
 	is_public=0
-fi
-
-# If db_name doesn't exist, create it
-if [ -z "$db_name" ]; then
-	# Create postgresql database
-	ynh_psql_test_if_first_run
-	db_name=$(ynh_sanitize_dbid --db_name=$app)
-	db_user=$db_name
-	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-	# Initialize database and store postgres password for upgrade
-	ynh_psql_setup_db --db_name=$db_name --db_user=$db_user
 fi
 
 # If final_path doesn't exist, create it
@@ -125,15 +112,32 @@ ynh_system_user_create --username=$app
 #=================================================
 # SPECIFIC UPGRADE
 #=================================================
+# ENABLE "TRANSCODE"
+#=================================================
+
+### For details, see https://airsonic.github.io/docs/transcode/
+
+mkdir $final_path/transcode
+
+if [ -x /usr/bin/ffmpeg ]; then   # Check if 'ffmpeg' is installed and executable
+	ln -s /usr/bin/ffmpeg $final_path/transcode
+fi
+
+# FIXME Not sure if 'lame' is needed ?
+if [ -x /usr/bin/lame ]; then   # Check if 'lame' is installed and executable
+	ln -s /usr/bin/lame $final_path/transcode
+fi
+
+# Ensure links belong to the $app user
+chown $app: $final_path/transcode
+
+#=================================================
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
 
 ynh_backup_if_checksum_is_different --file="$final_path/airsonic.properties"
 
 cp ../conf/airsonic.properties $final_path/airsonic.properties
-
-ynh_replace_string --match_string="__DB_NAME__" --replace_string=$db_name --target_file="$final_path/airsonic.properties"
-ynh_replace_string --match_string="__DB_PASSWORD__" --replace_string=$db_pwd --target_file="$final_path/airsonic.properties"
 
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum --file="$final_path/airsonic.properties"
