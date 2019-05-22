@@ -8,11 +8,11 @@ AssertPathExists=__FINALPATH__
 
 [Service]
 Type=simple
-Environment="JAVA_JAR=/var/airsonic/airsonic.war"
+Environment="JAVA_JAR=__FINALPATH__/airsonic.war"
 Environment="JAVA_OPTS=-Xmx700m"
-Environment="AIRSONIC_HOME=/var/airsonic"
-Environment="PORT=8080"
-Environment="CONTEXT_PATH=/airsonic"
+Environment="AIRSONIC_HOME=__FINALPATH__"
+Environment="PORT=__PORT__"
+Environment="CONTEXT_PATH=__PATH__"
 Environment="JAVA_ARGS="
 EnvironmentFile=-/etc/default/airsonic
 ExecStart=/usr/bin/java \

@@ -1,18 +1,7 @@
 SOURCE_URL=https://github.com/airsonic/airsonic/releases/download/v10.1.2/airsonic.war
 SOURCE_SUM=738c0614a113f692d75f62d9a74efab1580e3ba8c683feb8d6bfded80240f342
-# (Optional) Program to check the integrity (sha256sum, md5sum...)
-# default: sha256
 SOURCE_SUM_PRG=sha256sum
-# (Optional) Archive format
-# default: tar.gz
 SOURCE_FORMAT=false
-# (Optional) Put false if sources are directly in the archive root
-# default: true
 SOURCE_IN_SUBDIR=false
-# (Optionnal) Name of the local archive (offline setup support)
-# default: ${src_id}.${src_format}
 SOURCE_FILENAME=airsonic.war
-# (Optional) If it set as false don't extract the source.
-# (Useful to get a debian package or a python wheel.)
-# default: true
 SOURCE_EXTRACT=false

@@ -12,37 +12,66 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_script_progression --message="Loading installation settings..." --weight=1
 
 app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get $app domain)
-path_url=$(ynh_app_setting_get $app path)
-admin=$(ynh_app_setting_get $app admin)
-is_public=$(ynh_app_setting_get $app is_public)
-final_path=$(ynh_app_setting_get $app final_path)
-#language=$(ynh_app_setting_get $app language)
-#db_name=$(ynh_app_setting_get $app db_name)
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+path_url=$(ynh_app_setting_get --app=$app --key=path)
+admin=$(ynh_app_setting_get --app=$app --key=admin)
+is_public=$(ynh_app_setting_get --app=$app --key=is_public)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
+port=$(ynh_app_setting_get --app=$app --key=port)
 
-# Custom values out of the manifest
-service_config=$(ynh_app_setting_get $app service_config)
+#=================================================
+# CHECK VERSION
+#=================================================
+
+upgrade_type=$(ynh_check_app_version_changed)
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
+ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
+
+# Fix is_public as a boolean value
+if [ "$is_public" = "Yes" ]; then
+	ynh_app_setting_set --app=$app --key=is_public --value=1
+	is_public=1
+elif [ "$is_public" = "No" ]; then
+	ynh_app_setting_set --app=$app --key=is_public --value=0
+	is_public=0
+fi
 
 # If db_name doesn't exist, create it
-if [ -z $db_name ]; then
-	db_name=$(ynh_sanitize_dbid $app)
-	ynh_app_setting_set $app db_name $db_name
+if [ -z "$db_name" ]; then
+	# Create postgresql database
+	ynh_psql_test_if_first_run
+	db_name=$(ynh_sanitize_dbid --db_name=$app)
+	db_user=$db_name
+	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+	# Initialize database and store postgres password for upgrade
+	ynh_psql_setup_db --db_name=$db_name --db_user=$db_user
+fi
+
+# If final_path doesn't exist, create it
+if [ -z "$final_path" ]; then
+	final_path=/opt/yunohost/$app
+	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 fi
 
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
+ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=5
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
 ynh_clean_setup () {
+	ynh_clean_check_starting
+
 	# restore it if the upgrade fails
 	ynh_restore_upgradebackup
 }
@@ -50,24 +79,30 @@ ynh_clean_setup () {
 ynh_abort_if_errors
 
 #=================================================
-# CHECK THE PATH
-#=================================================
-
-# Normalize the URL path syntax
-path_url=$(ynh_normalize_url_path $path_url)
-
-#=================================================
 # STANDARD UPGRADE STEPS
+#=================================================
+# STOP SYSTEMD SERVICE
+#=================================================
+ynh_script_progression --message="Stopping a systemd service..." --weight=1
+
+ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
+
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
-# Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source "$final_path"
+if [ "$upgrade_type" == "UPGRADE_APP" ]
+then
+	ynh_script_progression --message="Upgrading source files..." --weight=94
+
+	# Download, check integrity, uncompress and patch the source from app.src
+	ynh_setup_source --dest_dir="$final_path"
+fi
 
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
+ynh_script_progression --message="Upgrading nginx web server configuration..." --weight=1
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
@@ -75,75 +110,52 @@ ynh_add_nginx_config
 #=================================================
 # UPGRADE DEPENDENCIES
 #=================================================
+ynh_script_progression --message="Upgrading dependencies..." --weight=4
 
-ynh_install_app_dependencies openjdk-8-jre ffmpeg
+ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
+ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
 
 # Create a dedicated user (if not existing)
-ynh_system_user_create $app
+ynh_system_user_create --username=$app
 
 #=================================================
 # SPECIFIC UPGRADE
 #=================================================
-# INTEGRATE APPLICATION WITH YUNOHOST
+# STORE THE CONFIG FILE CHECKSUM
 #=================================================
 
-### Verify the checksum of a file, stored by `ynh_store_file_checksum` in the install script.
-### And create a backup of this file if the checksum is different. So the file will be backed up if the admin had modified it.
+ynh_backup_if_checksum_is_different --file="$final_path/airsonic.properties"
 
-# Path of the systemd service configuration
-ynh_backup_if_checksum_is_different "$final_path/airsonic.properties"
+cp ../conf/airsonic.properties $final_path/airsonic.properties
 
-
-# preload Airsonic configuration with LDAP settings
-# FIXME It does not work at the moment
-# Maybe the settings are wrong or this is an issue with the app itself.
-# Airsonic logs are not verbose enough even in TRACE mode
-# See https://airsonic.github.io/docs/logging/
-
-#cp ../conf/airsonic.properties $final_path/airsonic.properties
-
+ynh_replace_string --match_string="__DB_NAME__" --replace_string=$db_name --target_file="$final_path/airsonic.properties"
+ynh_replace_string --match_string="__DB_PASSWORD__" --replace_string=$db_pwd --target_file="$final_path/airsonic.properties"
 
 # Recalculate and store the checksum of the file for the next upgrade.
-ynh_store_file_checksum "$final_path/airsonic.properties"
+ynh_store_file_checksum --file="$final_path/airsonic.properties"
 
 #=================================================
 # SETUP LOGROTATE
 #=================================================
+ynh_script_progression --message="Upgrading logrotate configuration..." --weight=1
 
 # Use logrotate to manage app-specific logfile(s)
-#ynh_use_logrotate --non-append   => TODO why no $file? why "--non-append"?
-
-ynh_use_logrotate --non-append $final_path/airsonic.log
+ynh_use_logrotate --non-append --logfile="$final_path/airsonic.log"
 
 #=================================================
 # SETUP SYSTEMD
 #=================================================
+ynh_script_progression --message="Upgrading systemd configuration..." --weight=1
+
+ynh_replace_string --match_string="__PORT__" --replace_string=$port --target_file="../conf/systemd.service"
+ynh_replace_string --match_string="__PATH__" --replace_string=$path_url --target_file="../conf/systemd.service"
 
 # Create a dedicated systemd config
 ynh_add_systemd_config
-
-
-# Backup existing systemd service configuration
-ynh_backup_if_checksum_is_different "$service_config"
-
-
-# Copy config. template to right location
-cp ../conf/systemd-sysconfig $service_config
-
-# Configure the service
-# TODO Config could be done in systemd template directly but documentation says
-# to avoid it. Stick with this config file for now
-ynh_replace_string "__FINALPATH__" "$final_path" "$service_config"
-ynh_replace_string "__PORT__"      "$port"       "$service_config"
-ynh_replace_string "__PATH__"      "$path_url"   "$service_config"
-
-
-# Recalculate and store the checksum of the file for the next upgrade.
-ynh_store_file_checksum "$service_config"
 
 #=================================================
 # GENERIC FINALIZATION
@@ -157,19 +169,31 @@ chown -R $app: $final_path
 #=================================================
 # SETUP SSOWAT
 #=================================================
+ynh_script_progression --message="Upgrading SSOwat configuration..." --weight=1
 
 # Make app public if necessary
 if [ $is_public -eq 1 ]
 then
 	# unprotected_uris allows SSO credentials to be passed anyway
-	ynh_app_setting_set $app unprotected_uris "/"
+	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
 fi
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression --message="Starting a systemd service..." --weight=12
+
+ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/airsonic.log" --line_match="Started Application in"
 
 #=================================================
 # RELOAD NGINX
 #=================================================
+ynh_script_progression --message="Reloading nginx web server..." --weight=1
 
-systemctl reload nginx
+ynh_systemd_action --service_name=nginx --action=reload
 
-# Run the app
-systemctl start $app.service
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Upgrade of $app completed" --last

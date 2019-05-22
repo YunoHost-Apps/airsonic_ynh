@@ -14,8 +14,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_clean_setup () {
-	### Remove this function if there's nothing to clean before calling the remove script.
-	true
+	ynh_clean_check_starting
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
@@ -28,104 +27,77 @@ domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
 admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
-#language=$YNH_APP_ARG_LANGUAGE
-#password=$YNH_APP_ARG_PASSWORD
 
-### If it's a multi-instance app, meaning it can be installed several times independently
-### The id of the app as stated in the manifest is available as $YNH_APP_ID
-### The instance number is available as $YNH_APP_INSTANCE_NUMBER (equals "1", "2", ...)
-### The app instance name is available as $YNH_APP_INSTANCE_NAME
-###    - the first time the app is installed, YNH_APP_INSTANCE_NAME = ynhexample
-###    - the second time the app is installed, YNH_APP_INSTANCE_NAME = ynhexample__2
-###    - ynhexample__{N} for the subsequent installations, with N=3,4, ...
-### The app instance name is probably what interests you most, since this is
-### guaranteed to be unique. This is a good unique identifier to define installation path,
-### db names, ...
 app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
+ynh_script_progression --message="Validating installation parameters..." --weight=1
 
-### If the app uses nginx as web server (written in HTML/PHP in most cases), the final path should be "/var/www/$app".
-### If the app provides an internal web server (or uses another application server such as uwsgi), the final path should be "/opt/yunohost/$app"
-#final_path=/var/$app   # Without looking at the comment, I would have installed the app in this folder
 final_path=/opt/yunohost/$app
+test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
 
-test ! -e "$final_path" || ynh_die "This path already contains a folder"
-
-# Normalize the url path syntax
-path_url=$(ynh_normalize_url_path $path_url)
-
-# Check web path availability
-ynh_webpath_available $domain $path_url
 # Register (book) web path
-ynh_webpath_register $app $domain $path_url
+ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
+ynh_script_progression --message="Storing installation settings..." --weight=2
 
-ynh_app_setting_set $app domain $domain
-ynh_app_setting_set $app path $path_url
-ynh_app_setting_set $app admin $admin
-ynh_app_setting_set $app is_public $is_public
-#ynh_app_setting_set $app language $language
+ynh_app_setting_set --app=$app --key=domain --value=$domain
+ynh_app_setting_set --app=$app --key=path --value=$path_url
+ynh_app_setting_set --app=$app --key=admin --value=$admin
+ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
 # FIND AND OPEN A PORT
 #=================================================
+ynh_script_progression --message="Configuring firewall..." --weight=1
 
 # Find a free port
-port=$(ynh_find_port 8095)
-# Open this port
-# FIXME Do NOT allow access from internet direcly. Users will have to go through
-# Nginx that acts as a reverse proxy for Airsonic
-#yunohost firewall allow --no-upnp TCP $port 2>&1
-ynh_app_setting_set $app port $port
+port=$(ynh_find_port --port=8095)
+ynh_app_setting_set --app=$app --key=port --value=$port
 
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
+ynh_script_progression --message="Installing dependencies..." --weight=43
 
-ynh_install_app_dependencies openjdk-8-jre ffmpeg
 # FIXME Should run "sudo update-alternatives --config java"
 # See https://airsonic.github.io/docs/install/prerequisites/
+ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
-# CREATE A MYSQL DATABASE
+# CREATE A POSTGRESQL DATABASE
 #=================================================
+ynh_script_progression --message="Creating a PostgreSQL database..." --weight=2
 
-### Use these lines if you need a database for the application.
-### `ynh_mysql_setup_db` will create a database, an associated user and a ramdom password.
-### The password will be stored as 'mysqlpwd' into the app settings,
-### and will be available as $db_pwd
-### If you're not using these lines:
-###		- Remove the section "BACKUP THE MYSQL DATABASE" in the backup script
-###		- Remove also the section "REMOVE THE MYSQL DATABASE" in the remove script
-###		- As well as the section "RESTORE THE MYSQL DATABASE" in the restore script
-
-#db_name=$(ynh_sanitize_dbid $app)
-#ynh_app_setting_set $app db_name $db_name
-#ynh_mysql_setup_db $db_name $db_name
+# Create postgresql database
+ynh_psql_test_if_first_run
+db_name=$(ynh_sanitize_dbid --db_name=$app)
+db_user=$db_name
+ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+# Initialize database and store postgres password for upgrade
+ynh_psql_setup_db --db_name=$db_name --db_user=$db_user
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd) # Password created in ynh_psql_setup_db function
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
+ynh_script_progression --message="Setting up source files..." --weight=82
 
-### `ynh_setup_source` is used to install an app from a zip or tar.gz file,
-### downloaded from an upstream source, like a git repository.
-### `ynh_setup_source` use the file conf/app.src
-
-ynh_app_setting_set $app final_path $final_path
+ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source "$final_path"
+ynh_setup_source --dest_dir=$final_path
 
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
+ynh_script_progression --message="Configuring nginx web server..." --weight=1
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
@@ -133,9 +105,10 @@ ynh_add_nginx_config
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
+ynh_script_progression --message="Configuring system user..." --weight=3
 
 # Create a system user
-ynh_system_user_create $app
+ynh_system_user_create --username=$app
 
 #=================================================
 # SPECIFIC SETUP
@@ -159,63 +132,32 @@ fi
 # Ensure links belong to the $app user
 chown $app: $final_path/transcode
 
-
 #=================================================
 # SETUP SYSTEMD
 #=================================================
+ynh_script_progression --message="Configuring a systemd service..." --weight=3
 
-### `ynh_systemd_config` is used to configure a systemd script for an app.
-### It can be used for apps that use sysvinit (with adaptation) or systemd.
-### Have a look at the app to be sure this app needs a systemd script.
-### `ynh_systemd_config` will use the file conf/systemd.service
+ynh_replace_string --match_string="__PORT__" --replace_string=$port --target_file="../conf/systemd.service"
+ynh_replace_string --match_string="__PATH__" --replace_string=$path_url --target_file="../conf/systemd.service"
 
 # Create a dedicated systemd config
 ynh_add_systemd_config
 
-
-# Path of the systemd service configuration
-service_config='/etc/default/airsonic'
-
-# Store the path in Yunohost app settings
-# Will be used in 'restore' and maybe 'upgrade'
-# Avoid to hardcore the value in the scripts
-ynh_app_setting_set $app service_config $service_config
-
-# Copy config. template to right location
-cp ../conf/systemd-sysconfig $service_config
-
-# Configure the service
-# TODO Config could be done in systemd template directly but documentation says
-# to avoid it. Stick with this config file for now
-ynh_replace_string "__FINALPATH__" "$final_path" "$service_config"
-ynh_replace_string "__PORT__"      "$port"       "$service_config"
-ynh_replace_string "__PATH__"      "$path_url"   "$service_config"
-
-
-# Calculate and store the config file checksum into the app settings
-ynh_store_file_checksum $service_config
-
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
-# INTEGRATE APPLICATION WITH YUNOHOST
-#=================================================
 
-# preload Airsonic configuration with LDAP settings
-# FIXME It does not work at the moment
-# Maybe the settings are wrong or this is an issue with the app itself.
-# Airsonic logs are not verbose enough even in TRACE mode
-# See https://airsonic.github.io/docs/logging/
+cp ../conf/airsonic.properties $final_path/airsonic.properties
 
-#cp ../conf/airsonic.properties $final_path/airsonic.properties
+ynh_replace_string --match_string="__DB_NAME__" --replace_string=$db_name --target_file="$final_path/airsonic.properties"
+ynh_replace_string --match_string="__DB_PASSWORD__" --replace_string=$db_pwd --target_file="$final_path/airsonic.properties"
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
 
-# Don't store this file checksum as it will be modified by user and it cannot
-# be overwritten easily during upgrade
-#ynh_store_file_checksum $final_path/airsonic.properties
+# Calculate and store the config file checksum into the app settings
+ynh_store_file_checksum --file="$final_path/airsonic.properties"
 
 #=================================================
 # GENERIC FINALIZATION
@@ -223,71 +165,93 @@ ynh_store_file_checksum $service_config
 # SECURE FILES AND DIRECTORIES
 #=================================================
 
-### For security reason, any app should set the permissions to root: before anything else.
-### Then, if write authorization is needed, any access should be given only to directories
-### that really need such authorization.
-
 # Set permissions to app files
 chown -R $app: $final_path
 
 #=================================================
 # SETUP LOGROTATE
 #=================================================
-
-### `ynh_use_logrotate` is used to configure a logrotate configuration for the logs of this app.
-### Use this helper only if there is effectively a log file for this app.
-### If you're not using this helper:
-###		- Remove the section "BACKUP LOGROTATE" in the backup script
-###		- Remove also the section "REMOVE LOGROTATE CONFIGURATION" in the remove script
-###		- As well as the section "RESTORE THE LOGROTATE CONFIGURATION" in the restore script
-###		- And the section "SETUP LOGROTATE" in the upgrade script
+ynh_script_progression --message="Configuring log rotation..." --weight=1
 
 # Use logrotate to manage application logfile(s)
 ynh_use_logrotate $final_path/airsonic.log
-# See https://airsonic.github.io/docs/logging/#main-log-file
 
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-### `yunohost service add` is a CLI yunohost command to add a service in the admin panel.
-### You'll find the service in the 'services' section of YunoHost admin panel.
-### This CLI command would be useless if the app does not have any services (systemd or sysvinit)
-### If you're not using these lines:
-###		- You can remove these files in conf/.
-###		- Remove the section "REMOVE SERVICE FROM ADMIN PANEL" in the remove script
-###		- As well as the section ADVERTISE SERVICE IN ADMIN PANEL" in the restore script
-
 yunohost service add $app --description "Airsonic daemon" --log "$final_path/airsonic.log"
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression --message="Starting a systemd service..." --weight=16
+
+# Start a systemd service
+ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/airsonic.log" --line_match="Started Application in"
+
+#=================================================
+# SETUP APPLICATION WITH CURL
+#=================================================
+ynh_script_progression --message="Configuring SSOwat..." --weight=1
+
+# Set the app as temporarily public for curl call
+ynh_app_setting_set --app=$app --key=skipped_uris --value="/"
+# Reload SSOwat config
+yunohost app ssowatconf
+
+# Reload Nginx
+ynh_systemd_action --service_name=nginx --action=reload
+
+mailadmin=$(ynh_user_get_info --username=$admin --key=mail)
+
+#http://www.subsonic.org/pages/api.jsp
+passwordAdmin="admin"
+salt=$(ynh_string_random --length=8)
+token=$(echo -n $passwordAdmin$salt | md5sum | awk '{print $1}')
+
+# Installation with curl
+ynh_script_progression --message="Finalizing installation..." --weight=6
+
+VERSION="1.15.0"
+
+# Change default admin password
+new_password=$(ynh_string_random --length=8)
+ynh_local_curl "/rest/changePassword.view" "u=admin" "t=$token" "s=$salt" "v=$VERSION" "c=myapp" "username=admin" "password=$new_password"
+
+# Create admin user
+passwordAdmin=$new_password
+token=$(echo -n $passwordAdmin$salt | md5sum | awk '{print $1}')
+
+ynh_local_curl "/rest/createUser.view" "u=admin" "t=$token" "s=$salt" "username=$admin" "password=a" "v=$VERSION" "c=myapp" "email=$mailadmin" "adminRole=Yes" "ldapAuthenticated=Yes" "settingsRole=Yes" "streamRole=Yes" "jukeboxRole=Yes" "downloadRole=Yes" "uploadRole=Yes" "playlistRole=Yes" "coverArtRole=Yes" "commentRole=Yes" "podcastRole=Yes" "shareRole=Yes" "videoConversionRole=Yes"
+
+# Remove the public access
+if [ $is_public -eq 0 ]
+then
+	ynh_app_setting_delete --app=$app --key=skipped_uris
+fi
 
 #=================================================
 # SETUP SSOWAT
 #=================================================
+ynh_script_progression --message="Configuring SSOwat..." --weight=2
 
 # Make app public if necessary
 if [ $is_public -eq 1 ]
 then
 	# unprotected_uris allows SSO credentials to be passed anyway.
-	ynh_app_setting_set $app unprotected_uris "/"
+	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
 fi
 
 #=================================================
-# MANAGE SERVICES
+# RELOAD NGINX
+#=================================================
+ynh_script_progression --message="Reloading nginx web server..." --weight=1
+
+ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# END OF SCRIPT
 #=================================================
 
-# Run the app
-systemctl start $app.service
-
-
-
-# Hack for 'package_check' to give enough time to the app to be deployed so the nginx reload does not break the run of the
-
-# Wait 150 seconds to let time to java for deploying the app and avoid "HTTP 502
-# errors" on nginx while Airsonic is starting. It also crashes 'package_check'
-# because of this
-#sleep 150
-
-# On a small dedicated server in the app log:
-# INFO --- org.airsonic.player.Application          : Started Application in 118.214 seconds (JVM running for 121.451)
-
-systemctl reload nginx
+ynh_script_progression --message="Installation of $app completed" --last

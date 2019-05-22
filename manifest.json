@@ -13,15 +13,8 @@
         "name": "Gofannon",
         "email": "gofannon@riseup.net"
     },
-    "previous_maintainers": [
-    {
-        "name": "XXX",
-        "email": "XXX",
-        "url": "XXX"
-    }
-    ],
     "requirements": {
-        "yunohost": ">= 3.0"
+        "yunohost": ">= 3.5"
     },
     "multi_instance": true,
     "services": [
