@@ -118,7 +118,7 @@ yunohost service add $app --description "Airsonic daemon" --log "$final_path/air
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..." --weight=11
+ynh_script_progression --message="Starting a systemd service..." --weight=12
 
 ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/airsonic.log" --line_match="Started Application in"
 
