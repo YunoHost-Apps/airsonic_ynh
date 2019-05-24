@@ -22,6 +22,7 @@ admin=$(ynh_app_setting_get --app=$app --key=admin)
 is_public=$(ynh_app_setting_get --app=$app --key=is_public)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 port=$(ynh_app_setting_get --app=$app --key=port)
+service_config=$(ynh_app_setting_get --app=$app --key=service_config)
 
 #=================================================
 # CHECK VERSION
@@ -47,6 +48,12 @@ fi
 if [ -z "$final_path" ]; then
 	final_path=/opt/yunohost/$app
 	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+fi
+
+# If service_config doesn't exist, create it
+if [ -z "$service_config" ]; then
+	final_path="/etc/default/$app"
+	ynh_app_setting_set --app=$app --key=service_config --value=$service_config
 fi
 
 #=================================================
@@ -155,11 +162,17 @@ ynh_use_logrotate --non-append --logfile="$final_path/airsonic.log"
 #=================================================
 ynh_script_progression --message="Upgrading systemd configuration..." --weight=1
 
-ynh_replace_string --match_string="__PORT__" --replace_string=$port --target_file="../conf/systemd.service"
-ynh_replace_string --match_string="__PATH__" --replace_string=$path_url --target_file="../conf/systemd.service"
-
 # Create a dedicated systemd config
 ynh_add_systemd_config
+
+ynh_backup_if_checksum_is_different --file="$service_config"
+
+# Copy config. template to right location
+cp ../conf/systemd-sysconfig $service_config
+
+ynh_replace_string --match_string="__FINALPATH__" --replace_string=$final_path --target_file="$service_config"
+ynh_replace_string --match_string="__PORT__" --replace_string=$port --target_file="$service_config"
+ynh_replace_string --match_string="__PATH__" --replace_string=$path_url --target_file="$service_config"
 
 #=================================================
 # GENERIC FINALIZATION

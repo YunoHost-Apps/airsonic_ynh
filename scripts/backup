@@ -29,6 +29,7 @@ app=$YNH_APP_INSTANCE_NAME
 
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 domain=$(ynh_app_setting_get --app=$app --key=domain)
+service_config=$(ynh_app_setting_get --app=$app --key=service_config)
 
 #=================================================
 # STANDARD BACKUP STEPS
@@ -68,6 +69,7 @@ ynh_backup --src_path="/etc/logrotate.d/$app"
 ynh_script_progression --message="Backing up systemd configuration..." --weight=1
 
 ynh_backup --src_path="/etc/systemd/system/$app.service"
+ynh_backup --src_path="$service_config"
 
 #=================================================
 # START SYSTEMD SERVICE

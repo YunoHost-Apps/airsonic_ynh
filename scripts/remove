@@ -19,6 +19,7 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 port=$(ynh_app_setting_get --app=$app --key=port)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+service_config=$(ynh_app_setting_get --app=$app --key=service_config)
 
 #=================================================
 # STANDARD REMOVE
@@ -86,11 +87,13 @@ fi
 #=================================================
 # SPECIFIC REMOVE
 #=================================================
-# REMOVE THE CRON FILE
+# REMOVE FILES
 #=================================================
 
 # Remove the log files
 ynh_secure_remove --file="/var/log/$app/"
+
+ynh_secure_remove --file="$service_config"
 
 #=================================================
 # GENERIC FINALIZATION
