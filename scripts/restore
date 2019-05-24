@@ -90,12 +90,12 @@ ynh_install_app_dependencies $pkg_dependencies
 
 mkdir -p $final_path/transcode
 
-if [ -x /usr/bin/ffmpeg -a ! -e $final_path/transcode/ffmpeg ]; then   # Check if 'ffmpeg' is installed and executable
+if [ -x /usr/bin/ffmpeg -a ! -e $final_path/transcode/ffmpeg ]; then   # Check if 'ffmpeg' is installed, executable and that the symlink doesn't exist
 	ln -s /usr/bin/ffmpeg $final_path/transcode
 fi
 
 # FIXME Not sure if 'lame' is needed ?
-if [ -x /usr/bin/lame -a ! -e $final_path/transcode/lame ]; then   # Check if 'lame' is installed and executable
+if [ -x /usr/bin/lame -a ! -e $final_path/transcode/lame ]; then   # Check if 'lame' is installed, executable and that the symlink doesn't exist
 	ln -s /usr/bin/lame $final_path/transcode
 fi
 
