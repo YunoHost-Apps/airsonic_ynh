@@ -207,6 +207,12 @@ token=$(echo -n $passwordAdmin$salt | md5sum | awk '{print $1}')
 # Installation with curl
 ynh_script_progression --message="Finalizing installation..." --weight=6
 
+# This version number can be found here:
+# https://airsonic.github.io/docs/api/
+# To use the rest API, after the version 1.13.0, you have to use a "salted hash of the password"
+# Doc here, part Authentication:
+# http://www.subsonic.org/pages/api.jsp
+
 VERSION="1.15.0"
 
 # Change default admin password
