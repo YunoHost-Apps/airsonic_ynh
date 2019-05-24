@@ -52,7 +52,7 @@ fi
 
 # If service_config doesn't exist, create it
 if [ -z "$service_config" ]; then
-	final_path="/etc/default/$app"
+	service_config="/etc/default/$app"
 	ynh_app_setting_set --app=$app --key=service_config --value=$service_config
 fi
 
