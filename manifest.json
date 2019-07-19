@@ -6,7 +6,7 @@
         "en": "Airsonic is an open source, web-based media server.",
         "fr": "Airsonic est un server multimedia open-source."
     },
-    "version": "10.3.1~ynh1",
+    "version": "10.3.1~ynh2",
     "url": "http://airsonic.github.io",
     "license": "GPL-3.0-or-later",
     "maintainer": {
