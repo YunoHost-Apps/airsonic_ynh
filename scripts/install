@@ -99,6 +99,33 @@ ynh_system_user_create --username=$app
 #=================================================
 # SPECIFIC SETUP
 #=================================================
+# CREATE DIRECTORIES
+#=================================================
+
+mkdir -p /home/yunohost.airsonic/{Podcasts,Playlists}
+
+#=================================================
+# SECURING FILES AND DIRECTORIES
+#=================================================
+
+chown -R $app:www-data /home/yunohost.airsonic/
+chmod -R 764 /home/yunohost.airsonic
+
+#=================================================
+# YUNOHOST MULTIMEDIA INTEGRATION
+#=================================================
+ynh_script_progression --message="Adding multimedia directories..." --weight=3
+
+ynh_multimedia_build_main_dir
+ynh_multimedia_addfolder --source_dir="/home/yunohost.airsonic/Podcasts" --dest_dir="share/Podcasts"
+ynh_multimedia_addfolder --source_dir="/home/yunohost.airsonic/Playlists" --dest_dir="share/Playlists"
+
+# Use multimedia folder
+echo "INSERT INTO MUSIC_FOLDER VALUES(1,'/home/yunohost.multimedia/share/Music','YunoHost Music',TRUE)" >> $final_path/db/airsonic.script
+# Remove the default folder
+ynh_replace_string --match_string="0,'/var/music','Music'" --replace_string="" --target_file="$final_path/db/airsonic.script"
+
+#=================================================
 # ENABLE "TRANSCODE"
 #=================================================
 
