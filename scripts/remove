@@ -90,9 +90,6 @@ fi
 # REMOVE FILES
 #=================================================
 
-# Remove the log files
-ynh_secure_remove --file="/var/log/$app/"
-
 ynh_secure_remove --file="$service_config"
 
 #=================================================

@@ -14,8 +14,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_clean_setup () {
-	### Remove this function if there's nothing to clean before calling the remove script.
-	true
+	ynh_clean_check_starting
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
@@ -38,7 +37,7 @@ service_config=$(ynh_app_setting_get --app=$app --key=service_config)
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..." --weight=2
 
-ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name=$app --action="stop"
 
 #=================================================
 # BACKUP THE APP MAIN DIR
@@ -72,11 +71,17 @@ ynh_backup --src_path="/etc/systemd/system/$app.service"
 ynh_backup --src_path="$service_config"
 
 #=================================================
+# BACKUP DATA
+#=================================================
+
+ynh_backup --src_path="/home/yunohost.airsonic" --is_big
+
+#=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --weight=12
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/airsonic.log" --line_match="Started Application in"
 
 #=================================================
 # END OF SCRIPT

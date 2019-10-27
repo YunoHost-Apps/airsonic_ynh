@@ -79,8 +79,7 @@ ynh_abort_if_errors
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..." --weight=1
 
-ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
-
+ynh_systemd_action --service_name=$app --action="stop"
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
@@ -118,6 +117,36 @@ ynh_system_user_create --username=$app
 
 #=================================================
 # SPECIFIC UPGRADE
+#=================================================
+# CREATE DIRECTORIES
+#=================================================
+
+mkdir -p /home/yunohost.airsonic/{Podcasts,Playlists}
+
+#=================================================
+# SECURING FILES AND DIRECTORIES
+#=================================================
+
+chown -R $app:www-data /home/yunohost.airsonic/
+chmod -R 764 /home/yunohost.airsonic
+
+#=================================================
+# YUNOHOST MULTIMEDIA INTEGRATION
+#=================================================
+ynh_script_progression --message="Adding multimedia directories..." --weight=3
+
+ynh_multimedia_build_main_dir
+ynh_multimedia_addfolder --source_dir="/home/yunohost.airsonic/Podcasts" --dest_dir="share/Podcasts"
+ynh_multimedia_addfolder --source_dir="/home/yunohost.airsonic/Playlists" --dest_dir="share/Playlists"
+
+if ! grep -q "PodcastFolder" $final_path/airsonic.properties; then
+	echo "PodcastFolder=/home/yunohost.multimedia/share/Podcasts" >> $final_path/airsonic.properties
+fi
+
+if ! grep -q "PlaylistFolder" $final_path/airsonic.properties; then
+	echo "PlaylistFolder=/home/yunohost.multimedia/share/Playlists" >> $final_path/airsonic.properties
+fi
+
 #=================================================
 # ENABLE "TRANSCODE"
 #=================================================
@@ -201,6 +230,19 @@ fi
 ynh_script_progression --message="Starting a systemd service..." --weight=12
 
 ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/airsonic.log" --line_match="Started Application in"
+
+# Use multimedia folder if needed
+if ! grep -q "/home/yunohost.multimedia/share/Music" $final_path/db/airsonic.script; then
+	ynh_systemd_action --service_name=$app --action="stop"
+
+	# Use multimedia folder
+	ynh_replace_string --match_string="INSERT INTO MUSIC_FOLDER VALUES(0,'/var/music','Music'" --replace_string="INSERT INTO MUSIC_FOLDER VALUES(0,'/home/yunohost.multimedia/share/Music','YunoHost Music'" --target_file="$final_path/db/airsonic.script"
+
+	ynh_script_progression --message="Restarting a systemd service..." --weight=12
+
+	# Start a systemd service
+	ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/airsonic.log" --line_match="Started Application in"
+fi
 
 #=================================================
 # RELOAD NGINX
