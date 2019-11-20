@@ -49,7 +49,6 @@ ynh_script_progression --message="Storing installation settings..." --weight=2
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=admin --value=$admin
-ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -167,6 +166,8 @@ ynh_replace_string --match_string="__PATH__" --replace_string=$path_url --target
 # Copy configuration file of airsonic
 cp ../conf/airsonic.properties $final_path/airsonic.properties
 
+ynh_replace_string --match_string="__APP__" --replace_string=$app --target_file="$final_path/airsonic.properties"
+
 #=================================================
 # STORE THE CONFIG FILES CHECKSUM
 #=================================================
@@ -212,10 +213,7 @@ ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/
 ynh_script_progression --message="Configuring SSOwat..." --weight=1
 
 # Set the app as temporarily public for curl call
-ynh_app_setting_set --app=$app --key=skipped_uris --value="/"
-# Reload SSOwat config
-yunohost app ssowatconf
-
+ynh_permission_update --permission "main" --remove "all_users" --add "visitors"
 # Reload Nginx
 ynh_systemd_action --service_name=nginx --action=reload
 
@@ -250,7 +248,7 @@ ynh_local_curl "/rest/createUser.view" "u=admin" "t=$token" "s=$salt" "username=
 # Remove the public access
 if [ $is_public -eq 0 ]
 then
-	ynh_app_setting_delete --app=$app --key=skipped_uris
+	ynh_permission_update --permission "main" --remove "visitors" --add "all_users"
 fi
 
 #=================================================
@@ -265,18 +263,6 @@ ynh_script_progression --message="Restarting a systemd service..." --weight=12
 
 # Start a systemd service
 ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/airsonic.log" --line_match="Started Application in"
-
-#=================================================
-# SETUP SSOWAT
-#=================================================
-ynh_script_progression --message="Configuring SSOwat..." --weight=2
-
-# Make app public if necessary
-if [ $is_public -eq 1 ]
-then
-	# unprotected_uris allows SSO credentials to be passed anyway.
-	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
-fi
 
 #=================================================
 # RELOAD NGINX

@@ -35,13 +35,9 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 
-# Fix is_public as a boolean value
-if [ "$is_public" = "Yes" ]; then
-	ynh_app_setting_set --app=$app --key=is_public --value=1
-	is_public=1
-elif [ "$is_public" = "No" ]; then
-	ynh_app_setting_set --app=$app --key=is_public --value=0
-	is_public=0
+# If is_public exists, remove it
+if [ ! -z $is_public ]; then
+	ynh_app_setting_delete --app=$app --key=is_public
 fi
 
 # If final_path doesn't exist, create it
@@ -175,6 +171,9 @@ ynh_backup_if_checksum_is_different --file="$final_path/airsonic.properties"
 
 cp ../conf/airsonic.properties $final_path/airsonic.properties
 
+ynh_replace_string --match_string="__APP__" --replace_string=$app --target_file="$final_path/airsonic.properties"
+
+
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum --file="$final_path/airsonic.properties"
 
@@ -211,18 +210,6 @@ ynh_replace_string --match_string="__PATH__" --replace_string=$path_url --target
 
 # Set permissions on app files
 chown -R $app: $final_path
-
-#=================================================
-# SETUP SSOWAT
-#=================================================
-ynh_script_progression --message="Upgrading SSOwat configuration..." --weight=1
-
-# Make app public if necessary
-if [ $is_public -eq 1 ]
-then
-	# unprotected_uris allows SSO credentials to be passed anyway
-	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
-fi
 
 #=================================================
 # START SYSTEMD SERVICE
