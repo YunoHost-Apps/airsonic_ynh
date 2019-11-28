@@ -3,8 +3,8 @@
     "id": "airsonic",
     "packaging_format": 1,
     "description": {
-        "en": "Airsonic is an open source, web-based media server.",
-        "fr": "Airsonic est un server multimedia open-source."
+        "en": "Stream and manage your music collection",
+        "fr": "Streamez et gérez votre collection de musique"
     },
     "version": "10.5.0~ynh1",
     "url": "http://airsonic.github.io",
