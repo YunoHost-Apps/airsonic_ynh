@@ -5,7 +5,7 @@
 #=================================================
 
 # dependencies used by the app
-pkg_dependencies="openjdk-8-jre ffmpeg"
+pkg_dependencies="openjdk-8-jre|openjdk-11-jre ffmpeg"
 
 #=================================================
 # PERSONAL HELPERS
