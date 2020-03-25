@@ -38,6 +38,8 @@ How to configure this app: by an admin panel.
 #### Multi-users support
 
 Are LDAP and HTTP auth supported? **Yes**  
+* Memory RAM limit set to 256Mb because airsonic was often killed by lack of RAM (hello OOM killer)
+  * See <https://www.reddit.com/r/airsonic/comments/doscco/jvm_memory_issues/>
 
 #### Supported architectures
 
