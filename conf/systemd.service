@@ -8,7 +8,7 @@ AssertPathExists=__FINALPATH__
 
 [Service]
 Type=simple
-Environment="JAVA_OPTS=-Xmx700m"
+Environment="JAVA_OPTS=-Xmx256m"
 Environment="JAVA_ARGS="
 EnvironmentFile=-/etc/default/__APP__
 ExecStart=/usr/bin/java \
