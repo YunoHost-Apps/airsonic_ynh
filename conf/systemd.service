@@ -34,7 +34,7 @@ RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 RestrictNamespaces=yes
 RestrictRealtime=yes
 SystemCallFilter=~@clock @debug @module @mount @obsolete @privileged @reboot @setuid @swap
-ReadWritePaths=/var/airsonic
+ReadWritePaths=__FINALPATH__
 
 # You can uncomment the following line if you're not using the jukebox
 # This will prevent airsonic from accessing any real (physical) devices
