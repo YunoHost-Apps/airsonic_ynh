@@ -6,7 +6,7 @@
         "en": "Stream and manage your music collection",
         "fr": "Streamez et gérez votre collection de musique"
     },
-    "version": "10.6.0~ynh1",
+    "version": "10.6.1~ynh1",
     "url": "http://airsonic.github.io",
     "license": "GPL-3.0-or-later",
     "maintainer": {
