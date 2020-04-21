@@ -67,8 +67,6 @@ ynh_app_setting_set --app=$app --key=port --value=$port
 #=================================================
 ynh_script_progression --message="Installing dependencies..." --weight=43
 
-# FIXME Should run "sudo update-alternatives --config java"
-# See https://airsonic.github.io/docs/install/prerequisites/
 ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
