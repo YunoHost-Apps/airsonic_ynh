@@ -117,6 +117,8 @@ ynh_script_progression --message="Adding multimedia directories..." --weight=3
 ynh_multimedia_build_main_dir
 ynh_multimedia_addfolder --source_dir="/home/yunohost.airsonic/Podcasts" --dest_dir="share/Podcasts"
 ynh_multimedia_addfolder --source_dir="/home/yunohost.airsonic/Playlists" --dest_dir="share/Playlists"
+# Allow airsonic to write into these directories
+ynh_multimedia_addaccess $app
 
 #=================================================
 # ENABLE "TRANSCODE"
