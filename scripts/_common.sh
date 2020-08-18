@@ -60,3 +60,14 @@ ynh_multimedia_addfolder () {
 
 	./yunohost.multimedia-master/script/ynh_media_addfolder.sh --source="$source_dir" --dest="$dest_dir"
 }
+
+# Grant write access to multimedia directories to a specified user
+#
+# usage: ynh_multimedia_addaccess user_name
+#
+# | arg: user_name - User to be granted write access
+ynh_multimedia_addaccess () {
+        local user_name=$1
+        groupadd -f multimedia
+        usermod -a -G multimedia $user_name
+}

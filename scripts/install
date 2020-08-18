@@ -118,6 +118,9 @@ ynh_multimedia_build_main_dir
 ynh_multimedia_addfolder --source_dir="/home/yunohost.airsonic/Podcasts" --dest_dir="share/Podcasts"
 ynh_multimedia_addfolder --source_dir="/home/yunohost.airsonic/Playlists" --dest_dir="share/Playlists"
 
+# Allow Airsonic to write into these directories
+ynh_multimedia_addaccess $app
+
 #=================================================
 # ENABLE "TRANSCODE"
 #=================================================
