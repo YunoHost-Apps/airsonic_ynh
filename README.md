@@ -1,9 +1,9 @@
 # Airsonic for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/airsonic.svg)](https://dash.yunohost.org/appci/app/airsonic)  
-[![Install airsonic with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=airsonic)
+[![Integration level](https://dash.yunohost.org/integration/airsonic.svg)](https://dash.yunohost.org/appci/app/airsonic) ![](https://ci-apps.yunohost.org/ci/badges/airsonic.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/airsonic.maintain.svg)  
+[![Install Airsonic with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=airsonic)
 
-> *This package allow you to install airsonic quickly and simply on a YunoHost server.  
+> *This package allow you to install Airsonic quickly and simply on a YunoHost server.  
 If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to know how to install and enjoy it.*
 
 ## Overview
@@ -36,18 +36,15 @@ How to configure this app: by an admin panel.
 
 ## YunoHost specific features
 
-* YunoHost LDAP accounts supported : you can logon with them
+* YunoHost LDAP accounts supported: you can login with them
 * [Multimedia](https://github.com/YunoHost-Apps/yunohost.multimedia) handled
-* Memory RAM limit set to 256Mb because airsonic was often killed by lack of RAM (hello OOM killer)
+* Memory RAM limit set to 256 MB because Airsonic was often killed by lack of RAM (hello OOM killer)
   * See <https://www.reddit.com/r/airsonic/comments/doscco/jvm_memory_issues/>
 
 ## Supported architectures
 
-* x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/airsonic%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/airsonic/)
+* x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/airsonic%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/airsonic/)
 * ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/airsonic%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/airsonic/)
-
-**More information on the documentation page:**  
-https://yunohost.org/packaging_apps
 
 ## Links
 
@@ -60,7 +57,6 @@ https://yunohost.org/packaging_apps
 
 ## Developers info
 
-**Only if you want to use a testing branch for coding, instead of merging directly into master.**
 Please do your pull request to the [testing branch](https://github.com/YunoHost-Apps/airsonic_ynh/tree/testing).
 
 To try the testing branch, please proceed like that.
