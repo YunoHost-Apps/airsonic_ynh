@@ -149,6 +149,9 @@ if ! grep -q "PlaylistFolder" $final_path/airsonic.properties; then
 	echo "PlaylistFolder=/home/yunohost.multimedia/share/Playlists" >> $final_path/airsonic.properties
 fi
 
+# Allow Airsonic to write into these directories
+ynh_multimedia_addaccess $app
+
 #=================================================
 # ENABLE "TRANSCODE"
 #=================================================

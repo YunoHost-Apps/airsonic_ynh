@@ -120,6 +120,9 @@ ynh_multimedia_addfolder --source_dir="/home/yunohost.airsonic/Playlists" --dest
 # Allow airsonic to write into these directories
 ynh_multimedia_addaccess $app
 
+# Allow Airsonic to write into these directories
+ynh_multimedia_addaccess $app
+
 #=================================================
 # ENABLE "TRANSCODE"
 #=================================================
