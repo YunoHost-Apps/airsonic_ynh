@@ -27,15 +27,15 @@ ynh_multimedia_build_main_dir () {
         local checksum="806a827ba1902d6911095602a9221181"
 
         # Download yunohost.multimedia scripts
-        wget -nv https://github.com/YunoHost-Apps/yunohost.multimedia/archive/${ynh_media_release}.tar.gz 
+        wget -nv https://github.com/YunoHost-Apps/yunohost.multimedia/archive/${ynh_media_release}.tar.gz
 
         # Check the control sum
         echo "${checksum} ${ynh_media_release}.tar.gz" | md5sum -c --status \
                 || ynh_die "Corrupt source"
 
-	# Check if the package acl is installed. Or install it.
-	ynh_package_is_installed 'acl' \
-		|| ynh_package_install acl
+        # Check if the package acl is installed. Or install it.
+        ynh_package_is_installed 'acl' \
+                || ynh_package_install acl
 
         # Extract
         mkdir yunohost.multimedia-master
@@ -59,4 +59,15 @@ ynh_multimedia_addfolder () {
 	ynh_handle_getopts_args "$@"
 
 	./yunohost.multimedia-master/script/ynh_media_addfolder.sh --source="$source_dir" --dest="$dest_dir"
+}
+
+# Grant write access to multimedia directories to a specified user
+#
+# usage: ynh_multimedia_addaccess user_name
+#
+# | arg: user_name - User to be granted write access
+ynh_multimedia_addaccess () {
+        local user_name=$1
+        groupadd -f multimedia
+        usermod -a -G multimedia $user_name
 }
