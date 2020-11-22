@@ -218,6 +218,12 @@ ynh_replace_string --match_string="__PATH__" --replace_string=$path_url --target
 chown -R $app: $final_path
 
 #=================================================
+# ADVERTISE SERVICE IN ADMIN PANEL
+#=================================================
+
+yunohost service add $app --description "Airsonic daemon" --log "$final_path/airsonic.log"
+
+#=================================================
 # SETUP SSOWAT
 #=================================================
 ynh_script_progression --message="Upgrading SSOwat configuration..." --weight=1
