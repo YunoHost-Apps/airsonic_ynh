@@ -80,6 +80,7 @@ ynh_abort_if_errors
 ynh_script_progression --message="Stopping a systemd service..." --weight=1
 
 ynh_systemd_action --service_name=$app --action="stop"
+
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
@@ -95,7 +96,7 @@ fi
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Upgrading nginx web server configuration..." --weight=1
+ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=1
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
@@ -121,14 +122,14 @@ ynh_system_user_create --username=$app
 # CREATE DIRECTORIES
 #=================================================
 
-mkdir -p /home/yunohost.airsonic/{Podcasts,Playlists}
+mkdir -p /home/yunohost.$app/{Podcasts,Playlists}
 
 #=================================================
 # SECURING FILES AND DIRECTORIES
 #=================================================
 
-chown -R $app:www-data /home/yunohost.airsonic/
-chmod -R 764 /home/yunohost.airsonic
+chown -R $app:www-data /home/yunohost.$app/
+chmod -R 764 /home/yunohost.$app
 
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
@@ -136,8 +137,8 @@ chmod -R 764 /home/yunohost.airsonic
 ynh_script_progression --message="Adding multimedia directories..." --weight=3
 
 ynh_multimedia_build_main_dir
-ynh_multimedia_addfolder --source_dir="/home/yunohost.airsonic/Podcasts" --dest_dir="share/Podcasts"
-ynh_multimedia_addfolder --source_dir="/home/yunohost.airsonic/Playlists" --dest_dir="share/Playlists"
+ynh_multimedia_addfolder --source_dir="/home/yunohost.$app/Podcasts" --dest_dir="share/Podcasts"
+ynh_multimedia_addfolder --source_dir="/home/yunohost.$app/Playlists" --dest_dir="share/Playlists"
 # Allow airsonic to write into these directories
 ynh_multimedia_addaccess $app
 
@@ -189,7 +190,7 @@ ynh_store_file_checksum --file="$final_path/airsonic.properties"
 ynh_script_progression --message="Upgrading logrotate configuration..." --weight=1
 
 # Use logrotate to manage app-specific logfile(s)
-ynh_use_logrotate --non-append --logfile="$final_path/airsonic.log"
+ynh_use_logrotate --non-append --logfile="$final_path/$app.log"
 
 #=================================================
 # SETUP SYSTEMD
@@ -216,6 +217,12 @@ ynh_replace_string --match_string="__PATH__" --replace_string=$path_url --target
 
 # Set permissions on app files
 chown -R $app: $final_path
+
+#=================================================
+# ADVERTISE SERVICE IN ADMIN PANEL
+#=================================================
+
+yunohost service add $app --description="Airsonic daemon" --log="$final_path/$app.log"
 
 #=================================================
 # SETUP SSOWAT
@@ -252,7 +259,7 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..." --weight=1
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 

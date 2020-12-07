@@ -32,14 +32,14 @@ How to configure this app: by an admin panel.
 
 ## Documentation
 
-* Official documentation: <https://airsonic.github.io/docs>
+* Official documentation: https://airsonic.github.io/docs
 
 ## YunoHost specific features
 
 * YunoHost LDAP accounts supported: you can login with them
 * [Multimedia](https://github.com/YunoHost-Apps/yunohost.multimedia) handled
 * Memory RAM limit set to 256 MB because Airsonic was often killed by lack of RAM (hello OOM killer)
-  * See <https://www.reddit.com/r/airsonic/comments/doscco/jvm_memory_issues/>
+  * See https://www.reddit.com/r/airsonic/comments/doscco/jvm_memory_issues/
 
 ## Supported architectures
 
