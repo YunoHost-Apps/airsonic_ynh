@@ -115,14 +115,14 @@ systemctl enable $app.service --quiet
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-yunohost service add $app --description="Airsonic daemon" --log="$final_path/airsonic.log"
+yunohost service add $app --description="Airsonic daemon" --log="$final_path/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --weight=12
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/airsonic.log" --line_match="Started Application in"
+ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/$app.log" --line_match="Started Application in"
 
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION
@@ -135,15 +135,15 @@ ynh_restore_file --origin_path="/etc/logrotate.d/$app"
 #=================================================
 
 # Use --not_mandatory for the data directory, because if the backup has been made with BACKUP_CORE_ONLY, there's no data into the backup.
-ynh_restore_file --origin_path="/home/yunohost.airsonic" --not_mandatory
+ynh_restore_file --origin_path="/home/yunohost.$app" --not_mandatory
 
 #=================================================
 # RESTORE USER RIGHTS
 #=================================================
 
-mkdir -p /home/yunohost.airsonic/{Podcasts,Playlists}
-chown -R $app:www-data /home/yunohost.airsonic/
-chmod -R 764 /home/yunohost.airsonic
+mkdir -p /home/yunohost.$app/{Podcasts,Playlists}
+chown -R $app:www-data /home/yunohost.$app/
+chmod -R 764 /home/yunohost.$app
 
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
@@ -151,8 +151,8 @@ chmod -R 764 /home/yunohost.airsonic
 ynh_script_progression --message="Adding multimedia directories..." --weight=3
 
 ynh_multimedia_build_main_dir
-ynh_multimedia_addfolder --source_dir="/home/yunohost.airsonic/Podcasts" --dest_dir="share/Podcasts"
-ynh_multimedia_addfolder --source_dir="/home/yunohost.airsonic/Playlists" --dest_dir="share/Playlists"
+ynh_multimedia_addfolder --source_dir="/home/yunohost.$app/Podcasts" --dest_dir="share/Podcasts"
+ynh_multimedia_addfolder --source_dir="/home/yunohost.$app/Playlists" --dest_dir="share/Playlists"
 # Allow airsonic to write into these directories
 ynh_multimedia_addaccess $app
 

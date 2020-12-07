@@ -100,14 +100,14 @@ ynh_system_user_create --username=$app
 # CREATE DIRECTORIES
 #=================================================
 
-mkdir -p /home/yunohost.airsonic/{Podcasts,Playlists}
+mkdir -p /home/yunohost.$app/{Podcasts,Playlists}
 
 #=================================================
 # SECURING FILES AND DIRECTORIES
 #=================================================
 
-chown -R $app:www-data /home/yunohost.airsonic/
-chmod -R 764 /home/yunohost.airsonic
+chown -R $app:www-data /home/yunohost.$app/
+chmod -R 764 /home/yunohost.$app
 
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
@@ -115,8 +115,8 @@ chmod -R 764 /home/yunohost.airsonic
 ynh_script_progression --message="Adding multimedia directories..." --weight=3
 
 ynh_multimedia_build_main_dir
-ynh_multimedia_addfolder --source_dir="/home/yunohost.airsonic/Podcasts" --dest_dir="share/Podcasts"
-ynh_multimedia_addfolder --source_dir="/home/yunohost.airsonic/Playlists" --dest_dir="share/Playlists"
+ynh_multimedia_addfolder --source_dir="/home/yunohost.$app/Podcasts" --dest_dir="share/Podcasts"
+ynh_multimedia_addfolder --source_dir="/home/yunohost.$app/Playlists" --dest_dir="share/Playlists"
 # Allow airsonic to write into these directories
 ynh_multimedia_addaccess $app
 
@@ -193,13 +193,13 @@ chown -R $app: $final_path
 ynh_script_progression --message="Configuring log rotation..." --weight=1
 
 # Use logrotate to manage application logfile(s)
-ynh_use_logrotate $final_path/airsonic.log
+ynh_use_logrotate $final_path/$app.log
 
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-yunohost service add $app --description="Airsonic daemon" --log="$final_path/airsonic.log"
+yunohost service add $app --description="Airsonic daemon" --log="$final_path/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -207,7 +207,7 @@ yunohost service add $app --description="Airsonic daemon" --log="$final_path/air
 ynh_script_progression --message="Starting a systemd service..." --weight=12
 
 # Start a systemd service
-ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/airsonic.log" --line_match="Started Application in"
+ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/$app.log" --line_match="Started Application in"
 
 #=================================================
 # SETUP APPLICATION WITH CURL

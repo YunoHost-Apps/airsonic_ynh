@@ -66,7 +66,7 @@ ynh_backup --src_path="$service_config"
 # BACKUP DATA
 #=================================================
 
-ynh_backup --src_path="/home/yunohost.airsonic" --is_big
+ynh_backup --src_path="/home/yunohost.$app" --is_big
 
 #=================================================
 # END OF SCRIPT
