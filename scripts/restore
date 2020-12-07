@@ -109,7 +109,7 @@ ynh_script_progression --message="Restoring the systemd configuration..." --weig
 
 ynh_restore_file --origin_path="/etc/systemd/system/$app.service"
 ynh_restore_file --origin_path="$service_config"
-systemctl enable $app.service
+systemctl enable $app.service --quiet
 
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
