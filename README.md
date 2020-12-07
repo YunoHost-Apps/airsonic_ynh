@@ -32,7 +32,7 @@ How to configure this app: by an admin panel.
 
 ## Documentation
 
-* Official documentation: <https://airsonic.github.io/docs>
+* Official documentation: https://airsonic.github.io/docs
 
 ## YunoHost specific features
 

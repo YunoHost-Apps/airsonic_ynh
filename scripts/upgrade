@@ -95,9 +95,9 @@ fi
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Upgrading nginx web server configuration..." --weight=1
+ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=1
 
-# Create a dedicated nginx config
+# Create a dedicated NGINX config
 ynh_add_nginx_config
 
 #=================================================
@@ -218,6 +218,12 @@ ynh_replace_string --match_string="__PATH__" --replace_string=$path_url --target
 chown -R $app: $final_path
 
 #=================================================
+# ADVERTISE SERVICE IN ADMIN PANEL
+#=================================================
+
+yunohost service add $app --description="Airsonic daemon" --log="$final_path/airsonic.log"
+
+#=================================================
 # SETUP SSOWAT
 #=================================================
 ynh_script_progression --message="Upgrading SSOwat configuration..." --weight=1
@@ -252,7 +258,7 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..." --weight=1
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 

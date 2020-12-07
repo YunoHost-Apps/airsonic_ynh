@@ -81,9 +81,9 @@ ynh_setup_source --dest_dir=$final_path
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring nginx web server..." --weight=1
+ynh_script_progression --message="Configuring NGINX web server..." --weight=1
 
-# Create a dedicated nginx config
+# Create a dedicated NGINX config
 ynh_add_nginx_config
 
 #=================================================
@@ -199,7 +199,7 @@ ynh_use_logrotate $final_path/airsonic.log
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-yunohost service add $app --description "Airsonic daemon" --log "$final_path/airsonic.log"
+yunohost service add $app --description="Airsonic daemon" --log="$final_path/airsonic.log"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -284,7 +284,7 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..." --weight=1
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 
