@@ -1,7 +1,7 @@
 # Airsonic for YunoHost
 
 [![Integration level](https://dash.yunohost.org/integration/airsonic.svg)](https://dash.yunohost.org/appci/app/airsonic) ![](https://ci-apps.yunohost.org/ci/badges/airsonic.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/airsonic.maintain.svg)  
-[![Install Airsonic with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=airsonic)
+[![Install Airsonic with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=airsonic)
 
 > *This package allow you to install Airsonic quickly and simply on a YunoHost server.  
 If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to know how to install and enjoy it.*
