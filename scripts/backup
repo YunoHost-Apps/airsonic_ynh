@@ -22,7 +22,7 @@ ynh_abort_if_errors
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..." --weight=1
+ynh_print_info --message="Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -31,25 +31,19 @@ domain=$(ynh_app_setting_get --app=$app --key=domain)
 service_config=$(ynh_app_setting_get --app=$app --key=service_config)
 
 #=================================================
-# STANDARD BACKUP STEPS
+# DECLARE DATA AND CONF FILES TO BACKUP
 #=================================================
-# STOP SYSTEMD SERVICE
-#=================================================
-ynh_script_progression --message="Stopping a systemd service..." --weight=2
-
-ynh_systemd_action --service_name=$app --action="stop"
+ynh_print_info --message="Declaring files to be backed up..."
 
 #=================================================
 # BACKUP THE APP MAIN DIR
 #=================================================
-ynh_script_progression --message="Backing up the main app directory..." --weight=1
 
 ynh_backup --src_path="$final_path"
 
 #=================================================
 # BACKUP THE NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Backing up nginx web server configuration..." --weight=1
 
 ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
@@ -58,14 +52,12 @@ ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 #=================================================
 # BACKUP LOGROTATE
 #=================================================
-ynh_script_progression --message="Backing up logrotate configuration..." --weight=1
 
 ynh_backup --src_path="/etc/logrotate.d/$app"
 
 #=================================================
 # BACKUP SYSTEMD
 #=================================================
-ynh_script_progression --message="Backing up systemd configuration..." --weight=1
 
 ynh_backup --src_path="/etc/systemd/system/$app.service"
 ynh_backup --src_path="$service_config"
@@ -74,17 +66,10 @@ ynh_backup --src_path="$service_config"
 # BACKUP DATA
 #=================================================
 
-ynh_backup --src_path="/home/yunohost.airsonic" --is_big
-
-#=================================================
-# START SYSTEMD SERVICE
-#=================================================
-ynh_script_progression --message="Starting a systemd service..." --weight=12
-
-ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/airsonic.log" --line_match="Started Application in"
+ynh_backup --src_path="/home/yunohost.$app" --is_big
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Backup script completed for $app. (YunoHost will then actually copy those files to the archive)." --last
+ynh_print_info --message="Backup script completed for $app. (YunoHost will then actually copy those files to the archive)."

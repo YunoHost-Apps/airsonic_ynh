@@ -1,7 +1,7 @@
 # Airsonic for YunoHost
 
 [![Integration level](https://dash.yunohost.org/integration/airsonic.svg)](https://dash.yunohost.org/appci/app/airsonic) ![](https://ci-apps.yunohost.org/ci/badges/airsonic.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/airsonic.maintain.svg)  
-[![Install Airsonic with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=airsonic)
+[![Install Airsonic with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=airsonic)
 
 > *This package allow you to install Airsonic quickly and simply on a YunoHost server.  
 If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to know how to install and enjoy it.*
@@ -32,14 +32,14 @@ How to configure this app: by an admin panel.
 
 ## Documentation
 
-* Official documentation: <https://airsonic.github.io/docs>
+* Official documentation: https://airsonic.github.io/docs
 
 ## YunoHost specific features
 
 * YunoHost LDAP accounts supported: you can login with them
 * [Multimedia](https://github.com/YunoHost-Apps/yunohost.multimedia) handled
 * Memory RAM limit set to 256 MB because Airsonic was often killed by lack of RAM (hello OOM killer)
-  * See <https://www.reddit.com/r/airsonic/comments/doscco/jvm_memory_issues/>
+  * See https://www.reddit.com/r/airsonic/comments/doscco/jvm_memory_issues/
 
 ## Supported architectures
 
