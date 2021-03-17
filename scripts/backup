@@ -28,7 +28,7 @@ app=$YNH_APP_INSTANCE_NAME
 
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 domain=$(ynh_app_setting_get --app=$app --key=domain)
-service_config=$(ynh_app_setting_get --app=$app --key=service_config)
+#service_config=$(ynh_app_setting_get --app=$app --key=service_config)
 
 #=================================================
 # DECLARE DATA AND CONF FILES TO BACKUP
@@ -60,7 +60,7 @@ ynh_backup --src_path="/etc/logrotate.d/$app"
 #=================================================
 
 ynh_backup --src_path="/etc/systemd/system/$app.service"
-ynh_backup --src_path="$service_config"
+ynh_backup --src_path="/etc/default/$app"
 
 #=================================================
 # BACKUP DATA
