@@ -49,7 +49,6 @@ ynh_script_progression --message="Storing installation settings..." --weight=2
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=admin --value=$admin
-ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -156,27 +155,23 @@ ynh_add_systemd_config
 #=================================================
 
 # Path of the systemd service configuration
-service_config="/etc/default/$app"
+# service_config="/etc/default/$app"
 
-ynh_app_setting_set --app=$app --key=service_config --value=$service_config
+# ynh_app_setting_set --app=$app --key=service_config --value=$service_config
 
 # Copy config. template to right location
-cp ../conf/systemd-sysconfig $service_config
+# cp ../conf/systemd-sysconfig $service_config
 
-ynh_replace_string --match_string="__FINALPATH__" --replace_string=$final_path --target_file="$service_config"
-ynh_replace_string --match_string="__PORT__" --replace_string=$port --target_file="$service_config"
-ynh_replace_string --match_string="__PATH__" --replace_string=$path_url --target_file="$service_config"
+# ynh_replace_string --match_string="__FINALPATH__" --replace_string=$final_path --target_file="$service_config"
+# ynh_replace_string --match_string="__PORT__" --replace_string=$port --target_file="$service_config"
+# ynh_replace_string --match_string="__PATH__" --replace_string=$path_url --target_file="$service_config"
+
+ynh_add_config --template="../conf/systemd-sysconfig" --destination="/etc/default/$app"
 
 # Copy configuration file of airsonic
 cp ../conf/airsonic.properties $final_path/airsonic.properties
-
-#=================================================
-# STORE THE CONFIG FILES CHECKSUM
-#=================================================
-
 # Calculate and store the config file checksum into the app settings
 ynh_store_file_checksum --file="$final_path/airsonic.properties"
-ynh_store_file_checksum --file="$service_config"
 
 #=================================================
 # GENERIC FINALIZATION
@@ -207,7 +202,7 @@ yunohost service add $app --description="Airsonic daemon" --log="$final_path/$ap
 ynh_script_progression --message="Starting a systemd service..." --weight=12
 
 # Start a systemd service
-ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/$app.log" --line_match="Started Application in"
+ynh_systemd_action --service_name=$app --action=start --log_path="$final_path/$app.log" --line_match="Started Application in"
 
 #=================================================
 # SETUP APPLICATION WITH CURL
@@ -218,6 +213,8 @@ ynh_permission_update --permission="main" --add="visitors"
 
 # Reload Nginx
 ynh_systemd_action --service_name=nginx --action=reload
+
+ynh_script_progression --message="Finalizing installation..." --weight=10
 
 mailadmin=$(ynh_user_get_info --username=$admin --key=mail)
 

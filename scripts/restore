@@ -30,7 +30,7 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-service_config=$(ynh_app_setting_get --app=$app --key=service_config)
+#service_config=$(ynh_app_setting_get --app=$app --key=service_config)
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
@@ -108,7 +108,7 @@ chown $app: $final_path/transcode
 ynh_script_progression --message="Restoring the systemd configuration..." --weight=1
 
 ynh_restore_file --origin_path="/etc/systemd/system/$app.service"
-ynh_restore_file --origin_path="$service_config"
+ynh_restore_file --origin_path="/etc/default/$app"
 systemctl enable $app.service --quiet
 
 #=================================================
