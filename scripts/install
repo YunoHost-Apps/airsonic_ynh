@@ -208,7 +208,7 @@ ynh_systemd_action --service_name=$app --action=start --log_path="$final_path/$a
 # SETUP APPLICATION WITH CURL
 #=================================================
 
-# Set the app as temporarily public for curl call
+# Set the app as temporarily public for cURL call
 ynh_permission_update --permission="main" --add="visitors"
 
 # Reload Nginx
