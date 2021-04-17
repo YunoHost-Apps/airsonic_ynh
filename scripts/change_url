@@ -112,15 +112,6 @@ ynh_script_progression --message="Configuring a systemd service..." --weight=3
 # Create a dedicated systemd config
 ynh_add_systemd_config
 
-# ynh_backup_if_checksum_is_different --file="$service_config"
-
-# Copy config. template to right location
-# cp ../conf/systemd-sysconfig $service_config
-
-# ynh_replace_string --match_string="__FINALPATH__" --replace_string=$final_path --target_file="$service_config"
-# ynh_replace_string --match_string="__PORT__" --replace_string=$port --target_file="$service_config"
-# ynh_replace_string --match_string="__PATH__" --replace_string=$path_url --target_file="$service_config"
-
 ynh_add_config --template="../conf/systemd-sysconfig" --destination="/etc/default/$app"
 
 #=================================================

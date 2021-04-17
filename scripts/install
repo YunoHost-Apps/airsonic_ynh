@@ -99,14 +99,14 @@ ynh_system_user_create --username=$app
 # CREATE DIRECTORIES
 #=================================================
 
-mkdir -p /home/yunohost.$app/{Podcasts,Playlists}
+mkdir -p /home/yunohost.app/$app/{Podcasts,Playlists}
 
 #=================================================
 # SECURING FILES AND DIRECTORIES
 #=================================================
 
-chown -R $app:www-data /home/yunohost.$app/
-chmod -R 764 /home/yunohost.$app
+chown -R $app:www-data /home/yunohost.app/$app
+chmod -R 764 /home/yunohost.app
 
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
@@ -114,8 +114,8 @@ chmod -R 764 /home/yunohost.$app
 ynh_script_progression --message="Adding multimedia directories..." --weight=3
 
 ynh_multimedia_build_main_dir
-ynh_multimedia_addfolder --source_dir="/home/yunohost.$app/Podcasts" --dest_dir="share/Podcasts"
-ynh_multimedia_addfolder --source_dir="/home/yunohost.$app/Playlists" --dest_dir="share/Playlists"
+ynh_multimedia_addfolder --source_dir="/home/yunohost.app/$app/Podcasts" --dest_dir="share/Podcasts"
+ynh_multimedia_addfolder --source_dir="/home/yunohost.app/$app/Playlists" --dest_dir="share/Playlists"
 # Allow airsonic to write into these directories
 ynh_multimedia_addaccess $app
 
@@ -153,18 +153,6 @@ ynh_add_systemd_config
 #=================================================
 # MODIFY CONFIG FILES
 #=================================================
-
-# Path of the systemd service configuration
-# service_config="/etc/default/$app"
-
-# ynh_app_setting_set --app=$app --key=service_config --value=$service_config
-
-# Copy config. template to right location
-# cp ../conf/systemd-sysconfig $service_config
-
-# ynh_replace_string --match_string="__FINALPATH__" --replace_string=$final_path --target_file="$service_config"
-# ynh_replace_string --match_string="__PORT__" --replace_string=$port --target_file="$service_config"
-# ynh_replace_string --match_string="__PATH__" --replace_string=$path_url --target_file="$service_config"
 
 ynh_add_config --template="../conf/systemd-sysconfig" --destination="/etc/default/$app"
 
