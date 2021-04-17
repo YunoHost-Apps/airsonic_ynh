@@ -106,7 +106,7 @@ mkdir -p /home/yunohost.app/$app/{Podcasts,Playlists}
 #=================================================
 
 chown -R $app:www-data /home/yunohost.app/$app
-chmod -R 764 /home/yunohost.app
+chmod 764 /home/yunohost.app/$app
 
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
