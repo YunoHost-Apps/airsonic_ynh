@@ -19,7 +19,6 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 admin=$(ynh_app_setting_get --app=$app --key=admin)
-is_public=$(ynh_app_setting_get --app=$app --key=is_public)
 port=$(ynh_app_setting_get --app=$app --key=port)
 
 #=================================================
@@ -119,7 +118,7 @@ mkdir -p /home/yunohost.app/$app/{Podcasts,Playlists}
 #=================================================
 
 chown -R $app:www-data /home/yunohost.app/$app
-chmod -R 764 /home/yunohost.$app
+chmod 764 /home/yunohost.app/$app
 
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
