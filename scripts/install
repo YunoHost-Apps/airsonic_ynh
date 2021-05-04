@@ -123,9 +123,6 @@ ynh_multimedia_addfolder --source_dir="/home/yunohost.app/$app/Playlists" --dest
 # Allow airsonic to write into these directories
 ynh_multimedia_addaccess $app
 
-# Allow Airsonic to write into these directories
-ynh_multimedia_addaccess $app
-
 #=================================================
 # ENABLE "TRANSCODE"
 #=================================================
@@ -159,11 +156,8 @@ ynh_add_systemd_config
 #=================================================
 
 ynh_add_config --template="../conf/systemd-sysconfig" --destination="/etc/default/$app"
-
 # Copy configuration file of airsonic
-cp ../conf/airsonic.properties $final_path/airsonic.properties
-# Calculate and store the config file checksum into the app settings
-ynh_store_file_checksum --file="$final_path/airsonic.properties"
+ynh_add_config --template="../conf/airsonic.properties" --destination="$final_path/airsonic.properties"
 
 #=================================================
 # GENERIC FINALIZATION

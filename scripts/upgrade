@@ -166,12 +166,8 @@ chown $app: $final_path/transcode
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
 
-ynh_backup_if_checksum_is_different --file="$final_path/airsonic.properties"
-
-cp ../conf/airsonic.properties $final_path/airsonic.properties
-
-# Recalculate and store the checksum of the file for the next upgrade.
-ynh_store_file_checksum --file="$final_path/airsonic.properties"
+# Copy configuration file of airsonic
+ynh_add_config --template="../conf/airsonic.properties" --destination="$final_path/airsonic.properties"
 
 #=================================================
 # SETUP LOGROTATE
