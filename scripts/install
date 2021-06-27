@@ -73,6 +73,14 @@ ynh_script_progression --message="Installing dependencies..." --weight=43
 ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..." --weight=3
+
+# Create a system user
+ynh_system_user_create --username=$app --home_dir="$final_path"
+
+#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression --message="Setting up source files..." --weight=82
@@ -80,6 +88,10 @@ ynh_script_progression --message="Setting up source files..." --weight=82
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir=$final_path
+
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -90,27 +102,18 @@ ynh_script_progression --message="Configuring NGINX web server..." --weight=1
 ynh_add_nginx_config
 
 #=================================================
-# CREATE DEDICATED USER
+# CREATE DATA DIRECTORY
 #=================================================
-ynh_script_progression --message="Configuring system user..." --weight=3
+ynh_script_progression --message="Creating a data directory..." --weight=1
 
-# Create a system user
-ynh_system_user_create --username=$app
-
-#=================================================
-# SPECIFIC SETUP
-#=================================================
-# CREATE DIRECTORIES
-#=================================================
+datadir=/home/yunohost.app/$app
+ynh_app_setting_set --app=$app --key=datadir --value=$datadir
 
 mkdir -p /home/yunohost.app/$app/{Podcasts,Playlists}
 
-#=================================================
-# SECURING FILES AND DIRECTORIES
-#=================================================
-
-chown -R $app:www-data /home/yunohost.app/$app
-chmod 764 /home/yunohost.app/$app
+chmod 764 "$datadir"
+chmod -R o-rwx "$datadir"
+chown -R $app:www-data "$datadir"
 
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
@@ -120,6 +123,7 @@ ynh_script_progression --message="Adding multimedia directories..." --weight=3
 ynh_multimedia_build_main_dir
 ynh_multimedia_addfolder --source_dir="/home/yunohost.app/$app/Podcasts" --dest_dir="share/Podcasts"
 ynh_multimedia_addfolder --source_dir="/home/yunohost.app/$app/Playlists" --dest_dir="share/Playlists"
+
 # Allow airsonic to write into these directories
 ynh_multimedia_addaccess $app
 
@@ -141,7 +145,7 @@ if [ -x /usr/bin/lame ]; then   # Check if 'lame' is installed and executable
 fi
 
 # Ensure links belong to the $app user
-chown $app: $final_path/transcode
+chown $app $final_path/transcode
 
 #=================================================
 # SETUP SYSTEMD
@@ -158,15 +162,6 @@ ynh_add_systemd_config
 ynh_add_config --template="../conf/systemd-sysconfig" --destination="/etc/default/$app"
 # Copy configuration file of airsonic
 ynh_add_config --template="../conf/airsonic.properties" --destination="$final_path/airsonic.properties"
-
-#=================================================
-# GENERIC FINALIZATION
-#=================================================
-# SECURE FILES AND DIRECTORIES
-#=================================================
-
-# Set permissions to app files
-chown -R $app: $final_path
 
 #=================================================
 # SETUP LOGROTATE

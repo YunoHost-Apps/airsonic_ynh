@@ -20,6 +20,7 @@ domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 admin=$(ynh_app_setting_get --app=$app --key=admin)
 port=$(ynh_app_setting_get --app=$app --key=port)
+datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 
 #=================================================
 # CHECK VERSION
@@ -36,6 +37,17 @@ ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 if [ -z "$final_path" ]; then
 	final_path=/opt/yunohost/$app
 	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+fi
+
+# If public_path doesn't exist, create it
+if [ -z "$datadir" ]; then
+	datadir=/home/yunohost.app/$app
+	mkdir -p $datadir/{Podcasts,Playlists}
+	chmod 764 "$datadir"
+	chmod -R o-rwx "$datadir"
+	chown -R $app:www-data "$datadir"
+	ynh_app_setting_set --app=$app --key=datadir --value=$datadir
+	cp -a "/home/yunohost.$app" "$datadir"
 fi
 
 # Cleaning legacy permissions
@@ -71,6 +83,14 @@ ynh_script_progression --message="Stopping a systemd service..." --weight=1
 ynh_systemd_action --service_name=$app --action="stop"
 
 #=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
+
+# Create a dedicated user (if not existing)
+ynh_system_user_create --username=$app --home_dir="$final_path"
+
+#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
@@ -81,6 +101,10 @@ then
 	# Download, check integrity, uncompress and patch the source from app.src
 	ynh_setup_source --dest_dir="$final_path"
 fi
+
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -97,28 +121,20 @@ ynh_script_progression --message="Upgrading dependencies..." --weight=4
 
 ynh_install_app_dependencies $pkg_dependencies
 
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
+# #=================================================
+# # SPECIFIC UPGRADE
+# #=================================================
+# # CREATE DIRECTORIES
+# #=================================================
 
-# Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app
+# mkdir -p /home/yunohost.app/$app/{Podcasts,Playlists}
 
-#=================================================
-# SPECIFIC UPGRADE
-#=================================================
-# CREATE DIRECTORIES
-#=================================================
+# #=================================================
+# # SECURING FILES AND DIRECTORIES
+# #=================================================
 
-mkdir -p /home/yunohost.app/$app/{Podcasts,Playlists}
-
-#=================================================
-# SECURING FILES AND DIRECTORIES
-#=================================================
-
-chown -R $app:www-data /home/yunohost.app/$app
-chmod 764 /home/yunohost.app/$app
+# chown -R $app:www-data /home/yunohost.app/$app
+# chmod 764 /home/yunohost.app/$app
 
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
@@ -160,7 +176,7 @@ if [ -x /usr/bin/lame -a ! -e $final_path/transcode/lame ]; then   # Check if 'l
 fi
 
 # Ensure links belong to the $app user
-chown $app: $final_path/transcode
+chown $app $final_path/transcode
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
@@ -186,15 +202,6 @@ ynh_script_progression --message="Upgrading systemd configuration..." --weight=1
 ynh_add_systemd_config
 
 ynh_add_config --template="../conf/systemd-sysconfig" --destination="/etc/default/$app"
-
-#=================================================
-# GENERIC FINALIZATION
-#=================================================
-# SECURE FILES AND DIRECTORIES
-#=================================================
-
-# Set permissions on app files
-chown -R $app: $final_path
 
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
