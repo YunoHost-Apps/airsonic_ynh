@@ -111,6 +111,13 @@ ynh_system_user_create --username=$app
 # CREATE DIRECTORIES
 #=================================================
 
+# Rename legacy folder to proper location
+if [[ ! -e /home/yunohost.app/$app ]] && [[ -e /home/yunohost.$app ]]
+then
+    mkdir -p /home/yunohost.app/
+    mv /home/yunohost.$app /home/yunohost.app/$app
+fi
+
 mkdir -p /home/yunohost.app/$app/{Podcasts,Playlists}
 
 #=================================================
