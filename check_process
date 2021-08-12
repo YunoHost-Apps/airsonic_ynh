@@ -15,8 +15,11 @@
 		upgrade=1        from_commit=72d530415c016b23b6ba62085272957b04d2cca6
 		backup_restore=1
 		multi_instance=1
-		port_already_use=0
 		change_url=1
 ;;; Options
 Email=
 Notification=none
+;;; Upgrade options
+	; commit=72d530415c016b23b6ba62085272957b04d2cca6
+		name=10.5.0~ynh2 on March 2020
+		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&language=fr&is_public=1&password=pass&port=666&
