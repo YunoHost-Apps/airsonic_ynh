@@ -21,5 +21,5 @@ Email=
 Notification=none
 ;;; Upgrade options
 	; commit=72d530415c016b23b6ba62085272957b04d2cca6
-		name=Name and date of the commit.
+		name=10.5.0~ynh2 on March 2020
 		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&language=fr&is_public=1&password=pass&port=666&

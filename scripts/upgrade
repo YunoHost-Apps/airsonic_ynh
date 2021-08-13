@@ -133,8 +133,21 @@ ynh_install_app_dependencies $pkg_dependencies
 # # SECURING FILES AND DIRECTORIES
 # #=================================================
 
-# chown -R $app:www-data /home/yunohost.app/$app
-# chmod 764 /home/yunohost.app/$app
+# Rename legacy folder to proper location
+if [[ ! -e /home/yunohost.app/$app ]] && [[ -e /home/yunohost.$app ]]
+then
+    mkdir -p /home/yunohost.app/
+    mv /home/yunohost.$app /home/yunohost.app/$app
+fi
+
+mkdir -p /home/yunohost.app/$app/{Podcasts,Playlists}
+
+#=================================================
+# SECURING FILES AND DIRECTORIES
+#=================================================
+
+chown -R $app:www-data /home/yunohost.app/$app
+chmod 764 /home/yunohost.app/$app
 
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
