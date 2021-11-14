@@ -13,7 +13,7 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 Streamez et gérez votre collection de musique
 
-**Version incluse :** 10.6.2~ynh2
+**Version incluse :** 10.6.2~ynh3
 
 **Démo :** https://airsonic.github.io/demo/
 

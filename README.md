@@ -17,7 +17,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 Stream and manage your music collection
 
-**Shipped version:** 10.6.2~ynh2
+**Shipped version:** 10.6.2~ynh3
 
 **Demo:** https://airsonic.github.io/demo/
 
