@@ -6,15 +6,22 @@
         "en": "Stream and manage your music collection",
         "fr": "Streamez et gérez votre collection de musique"
     },
-    "version": "10.6.2~ynh2",
+    "version": "10.6.2~ynh3",
     "url": "http://airsonic.github.io",
+    "upstream": {
+        "license": "GPL-3.0-or-later",
+        "website": "https://airsonic.github.io/",
+        "demo": "https://airsonic.github.io/demo/",
+        "admindoc": "https://airsonic.github.io/docs/",
+        "code": "https://github.com/airsonic/airsonic"
+    },
     "license": "GPL-3.0-or-later",
     "maintainer": {
         "name": "Gofannon",
         "email": "gofannon@riseup.net"
     },
     "requirements": {
-        "yunohost": ">= 4.1.7"
+        "yunohost": ">= 4.2.4"
     },
     "multi_instance": true,
     "services": [
@@ -24,8 +31,7 @@
         "install" : [
             {
                 "name": "domain",
-                "type": "domain",
-                "example": "example.com"
+                "type": "domain"
             },
             {
                 "name": "path",
@@ -35,12 +41,7 @@
             },
             {
                 "name": "admin",
-                "type": "user",
-                "help": {
-                    "en": "This user will have full control on this application and will be able to configure it.",
-                    "fr": "Cet utilisateur aura le controle total de l'application et pourra la configurer."
-                },
-                "example": "johndoe"
+                "type": "user"
             },
             {
                 "name": "is_public",
