@@ -1,5 +1,5 @@
-SOURCE_URL=https://github.com/airsonic-advanced/airsonic-advanced/releases/download/v10.6.0/airsonic.war
-SOURCE_SUM=528f417e59499161ad7fd8b86d391e3c7eff70e0825465e315f86d3417664c69
+SOURCE_URL=https://github.com/airsonic-advanced/airsonic-advanced/releases/download/11.0.0-SNAPSHOT.20220124042650/airsonic.war
+SOURCE_SUM=45c1de100b246b2a32712c10706ae5ff08c5135477052ac48070256019b81ebe
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=false
 SOURCE_IN_SUBDIR=false
