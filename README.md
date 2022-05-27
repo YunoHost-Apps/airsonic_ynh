@@ -5,7 +5,7 @@ It shall NOT be edited by hand.
 
 # Airsonic for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/airsonic.svg)](https://dash.yunohost.org/appci/app/airsonic) ![](https://ci-apps.yunohost.org/ci/badges/airsonic.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/airsonic.maintain.svg)  
+[![Integration level](https://dash.yunohost.org/integration/airsonic.svg)](https://dash.yunohost.org/appci/app/airsonic) ![Working status](https://ci-apps.yunohost.org/ci/badges/airsonic.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/airsonic.maintain.svg)  
 [![Install Airsonic with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=airsonic)
 
 *[Lire ce readme en français.](./README_fr.md)*
@@ -23,7 +23,7 @@ Stream and manage your music collection
 
 ## Screenshots
 
-![](./doc/screenshots/screenshot_01.png)
+![Screenshot of Airsonic](./doc/screenshots/screenshot_01.png)
 
 ## Disclaimers / important information
 
@@ -36,21 +36,22 @@ Stream and manage your music collection
 
 ## Documentation and resources
 
-* Official app website: https://airsonic.github.io/
-* Official admin documentation: https://airsonic.github.io/docs/
-* Upstream app code repository: https://github.com/airsonic/airsonic
-* YunoHost documentation for this app: https://yunohost.org/app_airsonic
-* Report a bug: https://github.com/YunoHost-Apps/airsonic_ynh/issues
+* Official app website: <https://airsonic.github.io/>
+* Official admin documentation: <https://airsonic.github.io/docs/>
+* Upstream app code repository: <https://github.com/airsonic/airsonic>
+* YunoHost documentation for this app: <https://yunohost.org/app_airsonic>
+* Report a bug: <https://github.com/YunoHost-Apps/airsonic_ynh/issues>
 
 ## Developer info
 
 Please send your pull request to the [testing branch](https://github.com/YunoHost-Apps/airsonic_ynh/tree/testing).
 
 To try the testing branch, please proceed like that.
-```
+
+``` bash
 sudo yunohost app install https://github.com/YunoHost-Apps/airsonic_ynh/tree/testing --debug
 or
 sudo yunohost app upgrade airsonic -u https://github.com/YunoHost-Apps/airsonic_ynh/tree/testing --debug
 ```
 
-**More info regarding app packaging:** https://yunohost.org/packaging_apps
+**More info regarding app packaging:** <https://yunohost.org/packaging_apps>
