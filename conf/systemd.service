@@ -8,6 +8,8 @@ AssertPathExists=__FINALPATH__
 
 [Service]
 Type=simple
+User=__APP__
+Group=__APP__
 Environment="JAVA_OPTS=-Xmx256m"
 Environment="JAVA_ARGS="
 EnvironmentFile=-/etc/default/__APP__
@@ -17,22 +19,17 @@ ExecStart=/usr/bin/java \
           -Dserver.context-path=${CONTEXT_PATH} \
           -Dserver.port=${PORT} \
           -jar ${JAVA_JAR} $JAVA_ARGS
-User=__APP__
-Group=__APP__
 
 # See https://www.freedesktop.org/software/systemd/man/systemd.exec.html
 # for details
-DevicePolicy=closed
 DeviceAllow=char-alsa rw
 NoNewPrivileges=yes
 PrivateTmp=yes
 PrivateUsers=yes
-ProtectControlGroups=yes
-ProtectKernelModules=yes
-ProtectKernelTunables=yes
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 RestrictNamespaces=yes
 RestrictRealtime=yes
+DevicePolicy=closed
 SystemCallFilter=~@clock @debug @module @mount @obsolete @privileged @reboot @setuid @swap
 ReadWritePaths=__FINALPATH__
 
@@ -44,6 +41,9 @@ ReadWritePaths=__FINALPATH__
 # if you don't want airsonic to be able to
 # write anything on your filesystem outside of AIRSONIC_HOME.
 ProtectSystem=full
+ProtectControlGroups=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
 
 # You can uncomment the following line if you don't have any media
 # in /home/…. This will prevent airsonic from ever reading/writing anything there.
@@ -53,7 +53,6 @@ ProtectSystem=full
 # This will prevent processes from having a memory zone that is both writeable
 # and executeable, making hacker's lifes a bit harder.
 #MemoryDenyWriteExecute=yes
-
 
 [Install]
 WantedBy=multi-user.target

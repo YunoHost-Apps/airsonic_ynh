@@ -18,7 +18,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_clean_setup () {
-	ynh_clean_check_starting
+	true
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
@@ -29,8 +29,8 @@ ynh_abort_if_errors
 
 domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
-admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
+admin=$YNH_APP_ARG_ADMIN
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -61,7 +61,7 @@ ynh_app_setting_set --app=$app --key=admin --value=$admin
 #=================================================
 ynh_script_progression --message="Finding an available port..." --weight=1
 
-# Find a free port
+# Find an available port
 port=$(ynh_find_port --port=8095)
 ynh_app_setting_set --app=$app --key=port --value=$port
 
@@ -87,7 +87,7 @@ ynh_script_progression --message="Setting up source files..." --weight=82
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source --dest_dir=$final_path
+ynh_setup_source --dest_dir="$final_path"
 
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
@@ -109,7 +109,7 @@ ynh_script_progression --message="Creating a data directory..." --weight=1
 datadir=/home/yunohost.app/$app
 ynh_app_setting_set --app=$app --key=datadir --value=$datadir
 
-mkdir -p /home/yunohost.app/$app/{Podcasts,Playlists}
+mkdir -p $datadir/{Podcasts,Playlists}
 
 chmod 764 "$datadir"
 chmod -R o-rwx "$datadir"
@@ -130,6 +130,7 @@ ynh_multimedia_addaccess $app
 #=================================================
 # ENABLE "TRANSCODE"
 #=================================================
+ynh_script_progression --message="Enabling transcode..." --weight=1
 
 ### For details, see https://airsonic.github.io/docs/transcode/
 
@@ -148,6 +149,20 @@ fi
 chown $app $final_path/transcode
 
 #=================================================
+# ADD A CONFIGURATION
+#=================================================
+ynh_script_progression --message="Adding a configuration file..." --weight=1
+
+ynh_add_config --template="../conf/systemd-sysconfig" --destination="/etc/default/$app"
+chmod 400 "/etc/default/$app"
+chown $app:$app "/etc/default/$app"
+
+# Copy configuration file of airsonic
+ynh_add_config --template="../conf/airsonic.properties" --destination="$final_path/airsonic.properties"
+chmod 400 "$final_path/airsonic.properties"
+chown $app:$app "$final_path/airsonic.properties"
+
+#=================================================
 # SETUP SYSTEMD
 #=================================================
 ynh_script_progression --message="Configuring a systemd service..." --weight=3
@@ -156,44 +171,19 @@ ynh_script_progression --message="Configuring a systemd service..." --weight=3
 ynh_add_systemd_config
 
 #=================================================
-# MODIFY CONFIG FILES
-#=================================================
-
-ynh_add_config --template="../conf/systemd-sysconfig" --destination="/etc/default/$app"
-# Copy configuration file of airsonic
-ynh_add_config --template="../conf/airsonic.properties" --destination="$final_path/airsonic.properties"
-
-#=================================================
-# SETUP LOGROTATE
-#=================================================
-ynh_script_progression --message="Configuring log rotation..." --weight=1
-
-# Use logrotate to manage application logfile(s)
-ynh_use_logrotate $final_path/$app.log
-
-#=================================================
-# ADVERTISE SERVICE IN ADMIN PANEL
-#=================================================
-
-yunohost service add $app --description="Airsonic daemon" --log="$final_path/$app.log"
-
-#=================================================
-# START SYSTEMD SERVICE
-#=================================================
-ynh_script_progression --message="Starting a systemd service..." --weight=12
-
-# Start a systemd service
-ynh_systemd_action --service_name=$app --action=start --log_path="$final_path/$app.log" --line_match="Started Application in"
-
-#=================================================
 # SETUP APPLICATION WITH CURL
 #=================================================
+ynh_script_progression --message="Setuping application with CURL..." --weight=1
 
-# Set the app as temporarily public for cURL call
+ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/$app.log" --line_match="Started Application in"
+
+# Set the app as temporarily public for curl call
+ynh_script_progression --message="Configuring SSOwat..." --weight=1
+# Making the app public for curl
 ynh_permission_update --permission="main" --add="visitors"
 
 # Reload Nginx
-ynh_systemd_action --service_name=nginx --action=reload
+ynh_systemd_action --service_name=nginx --action="reload"
 
 ynh_script_progression --message="Finalizing installation..." --weight=10
 
@@ -225,9 +215,14 @@ token=$(echo -n $passwordAdmin$salt | md5sum | awk '{print $1}')
 
 ynh_local_curl "/rest/createUser.view" "u=admin" "t=$token" "s=$salt" "username=$admin" "password=a" "v=$VERSION" "c=myapp" "email=$mailadmin" "adminRole=Yes" "ldapAuthenticated=Yes" "settingsRole=Yes" "streamRole=Yes" "jukeboxRole=Yes" "downloadRole=Yes" "uploadRole=Yes" "playlistRole=Yes" "coverArtRole=Yes" "commentRole=Yes" "podcastRole=Yes" "shareRole=Yes" "videoConversionRole=Yes"
 
+# Remove the public access
+ynh_permission_update --permission="main" --remove="visitors"
+
 #=================================================
 # USE MULTIMEDIA
 #=================================================
+ynh_script_progression --message="Using multimedia..." --weight=1
+
 ynh_systemd_action --service_name=$app --action="stop"
 
 # Use multimedia folder
@@ -239,14 +234,41 @@ ynh_script_progression --message="Restarting a systemd service..." --weight=12
 ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/airsonic.log" --line_match="Started Application in"
 
 #=================================================
+# GENERIC FINALIZATION
+#=================================================
+# SETUP LOGROTATE
+#=================================================
+ynh_script_progression --message="Configuring log rotation..." --weight=1
+
+# Use logrotate to manage application logfile(s)
+ynh_use_logrotate $final_path/$app.log
+
+#=================================================
+# INTEGRATE SERVICE IN YUNOHOST
+#=================================================
+ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
+
+yunohost service add $app --description="Airsonic daemon" --log="$final_path/$app.log"
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression --message="Starting a systemd service..." --weight=12
+
+# Start a systemd service
+ynh_systemd_action --service_name=$app --action="restart" --log_path="$final_path/$app.log" --line_match="Started Application in"
+
+#=================================================
 # SETUP SSOWAT
 #=================================================
 ynh_script_progression --message="Configuring permissions..." --weight=1
 
-# Make app public if necessary or protect it
-if [ $is_public -eq 0 ]
+# Make app public if necessary
+if [ $is_public -eq 1 ]
 then
-	ynh_permission_update --permission="main" --remove="visitors"
+	# Everyone can access the app.
+	# The "main" permission is automatically created before the install script.
+	ynh_permission_update --permission="main" --add="visitors"
 fi
 
 #=================================================
