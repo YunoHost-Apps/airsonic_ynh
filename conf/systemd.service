@@ -16,7 +16,7 @@ EnvironmentFile=-/etc/default/__APP__
 ExecStart=/usr/bin/java \
           $JAVA_OPTS \
           -Dairsonic.home=${AIRSONIC_HOME} \
-          -Dserver.context-path=${CONTEXT_PATH} \
+          -Dserver.servlet.context-path=${CONTEXT_PATH} \
           -Dserver.port=${PORT} \
           -jar ${JAVA_JAR} $JAVA_ARGS
 

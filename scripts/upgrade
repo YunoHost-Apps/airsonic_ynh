@@ -60,7 +60,7 @@ ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 
 # If final_path doesn't exist, create it
 if [ -z "$final_path" ]; then
-	final_path=/opt/yunohost/$app
+	final_path=/var/www/$app
 	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 fi
 
@@ -185,11 +185,11 @@ chown $app $final_path/transcode
 ynh_script_progression --message="Updating a configuration file..." --weight=1
 
 ynh_add_config --template="../conf/systemd-sysconfig" --destination="/etc/default/$app"
-chmod 400 "/etc/default/$app"
+chmod 600 "/etc/default/$app"
 chown $app:$app "/etc/default/$app"
 
 ynh_add_config --template="../conf/airsonic.properties" --destination="$final_path/airsonic.properties"
-chmod 400 "$final_path/airsonic.properties"
+chmod 600 "$final_path/airsonic.properties"
 chown $app:$app "$final_path/airsonic.properties"
 
 #=================================================

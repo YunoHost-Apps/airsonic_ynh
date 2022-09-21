@@ -1,19 +1,18 @@
 {
-    "name": "Airsonic",
+    "name": "Airsonic-Advanced",
     "id": "airsonic",
     "packaging_format": 1,
     "description": {
         "en": "Stream and manage your music collection",
         "fr": "Streamez et gérez votre collection de musique"
     },
-    "version": "10.6.2~ynh3",
-    "url": "http://airsonic.github.io",
+    "version": "11.0.0-SNAPSHOT.20220625052932~ynh1",
+    "url": "https://github.com/airsonic-advanced/airsonic-advanced",
     "upstream": {
         "license": "GPL-3.0-or-later",
-        "website": "https://airsonic.github.io/",
-        "demo": "https://airsonic.github.io/demo/",
+        "website": "https://github.com/airsonic-advanced/airsonic-advanced",
         "admindoc": "https://airsonic.github.io/docs/",
-        "code": "https://github.com/airsonic/airsonic"
+        "code": "https://github.com/airsonic-advanced/airsonic-advanced"
     },
     "license": "GPL-3.0-or-later",
     "maintainer": {
