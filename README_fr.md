@@ -17,7 +17,9 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 Streamez et gérez votre collection de musique
 
-**Version incluse :** 10.6.2~ynh3
+
+**Version incluse :** 10.6.2~ynh3
+
 
 **Démo :** https://airsonic.github.io/demo/
 
@@ -25,14 +27,6 @@ Streamez et gérez votre collection de musique
 
 ![Capture d'écran de Airsonic](./doc/screenshots/screenshot_01.png)
 
-## Avertissements / informations importantes
-
-## Fonctionnalités spécifiques à YunoHost
-
-* Comptes LDAP YunoHost pris en charge : **oui**
-* [Multimédia](https://github.com/YunoHost-Apps/yunohost.multimedia) géré
-* Limite de mémoire RAM fixée à 256 Mb car Airsonic quittait souvant par manque de RAM (bonjour OOM killer)
-* Voir https://www.reddit.com/r/airsonic/comments/doscco/jvm_memory_issues/ 
 ## Documentations et ressources
 
 * Site officiel de l'app : <https://airsonic.github.io/>
