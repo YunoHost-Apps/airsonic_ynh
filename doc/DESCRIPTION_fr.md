@@ -1,1 +1,1 @@
-Streamez et gérez votre collection de musique
+Streamez et gÃ©rez votre collection de musique
