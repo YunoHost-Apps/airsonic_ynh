@@ -19,6 +19,7 @@ Stream and manage your music collection
 
 **Shipped version:** 10.6.2~ynh3
 
+
 **Demo:** https://airsonic.github.io/demo/
 
 ## Screenshots
