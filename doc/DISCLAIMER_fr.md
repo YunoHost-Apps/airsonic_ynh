@@ -1,6 +1,6 @@
-## Fonctionnalités spécifiques à YunoHost
+## Caractéristiques spécifiques de YunoHost
 
-* Comptes LDAP YunoHost pris en charge : **oui**
-* [Multimédia](https://github.com/YunoHost-Apps/yunohost.multimedia) géré
-* Limite de mémoire RAM fixée à 256 Mb car Airsonic quittait souvant par manque de RAM (bonjour OOM killer)
-* Voir https://www.reddit.com/r/airsonic/comments/doscco/jvm_memory_issues/ 
+* Comptes LDAP supportés par YunoHost : **Oui**
+* Gestion du [Multimédia](https://github.com/YunoHost-Apps/yunohost.multimedia)
+* La limite de mémoire RAM a été fixée à 256 Mo car Airsonic était souvent tué par le manque de RAM (hello OOM killer).
+* Voir https://www.reddit.com/r/airsonic/comments/doscco/jvm_memory_issues/

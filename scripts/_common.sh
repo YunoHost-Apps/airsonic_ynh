@@ -4,8 +4,8 @@
 # COMMON VARIABLES
 #=================================================
 
-# dependencies used by the app
-pkg_dependencies="openjdk-8-jre|openjdk-11-jre ffmpeg"
+# dependencies used by the app (must be on a single line)
+pkg_dependencies="openjdk-11-jre ffmpeg"
 
 #=================================================
 # PERSONAL HELPERS
