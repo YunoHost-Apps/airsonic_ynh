@@ -6,7 +6,7 @@
         "en": "Stream and manage your music collection",
         "fr": "Streamez et gérez votre collection de musique"
     },
-    "version": "11.0.0-SNAPSHOT.20220625052932~ynh1",
+    "version": "11.0.0~ynh2",
     "url": "https://github.com/airsonic-advanced/airsonic-advanced",
     "upstream": {
         "license": "GPL-3.0-or-later",
@@ -20,7 +20,7 @@
         "email": ""
     },
     "requirements": {
-        "yunohost": ">= 11.0.0"
+        "yunohost": ">= 11.0.9"
     },
     "multi_instance": true,
     "services": [
