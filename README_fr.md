@@ -26,7 +26,7 @@ Si vous avez une bande passante limitée, vous pouvez fixer une limite supérieu
 En plus d'être un serveur de médias en streaming, Airsonic fonctionne très bien comme un jukebox local. L'interface web intuitive, ainsi que les fonctions de recherche et d'indexation, sont optimisées pour une navigation efficace dans les grandes bibliothèques de médias. Airsonic est également livré avec un récepteur de podcasts intégré, avec la plupart des fonctionnalités que vous trouvez dans iTunes.
 
 
-**Version incluse :** 11.0.0-SNAPSHOT.20220625052932~ynh1
+**Version incluse :** 11.0.0~ynh2
 
 ## Captures d'écran
 
