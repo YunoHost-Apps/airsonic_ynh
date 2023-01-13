@@ -26,7 +26,7 @@ If you have constrained bandwidth, you may set an upper limit for the bit rate o
 In addition to being a streaming media server, Airsonic works very well as a local jukebox. The intuitive web interface, as well as search and index facilities, are optimized for efficient browsing through large media libraries. Airsonic also comes with an integrated Podcast receiver, with many of the same features as you find in iTunes.
 
 
-**Shipped version:** 11.0.0~ynh2
+**Shipped version:** 11.0.0~ynh3
 
 ## Screenshots
 
@@ -43,7 +43,6 @@ In addition to being a streaming media server, Airsonic works very well as a loc
 
 ## Documentation and resources
 
-* Official app website: <https://github.com/airsonic-advanced/airsonic-advanced>
 * Official admin documentation: <https://airsonic.github.io/docs/>
 * Upstream app code repository: <https://github.com/airsonic-advanced/airsonic-advanced>
 * YunoHost documentation for this app: <https://yunohost.org/app_airsonic>
