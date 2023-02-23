@@ -5,7 +5,8 @@ It shall NOT be edited by hand.
 
 # Airsonic-Advanced for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/airsonic.svg)](https://dash.yunohost.org/appci/app/airsonic) ![Working status](https://ci-apps.yunohost.org/ci/badges/airsonic.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/airsonic.maintain.svg)  
+[![Integration level](https://dash.yunohost.org/integration/airsonic.svg)](https://dash.yunohost.org/appci/app/airsonic) ![Working status](https://ci-apps.yunohost.org/ci/badges/airsonic.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/airsonic.maintain.svg)
+
 [![Install Airsonic-Advanced with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=airsonic)
 
 *[Lire ce readme en français.](./README_fr.md)*
