@@ -6,7 +6,7 @@
         "en": "Stream and manage your music collection",
         "fr": "Streamez et gérez votre collection de musique"
     },
-    "version": "11.0.0~ynh4",
+    "version": "11.0.0-SNAPSHOT.20230217142243~ynh1",
     "url": "https://github.com/airsonic-advanced/airsonic-advanced",
     "upstream": {
         "license": "GPL-3.0-or-later",
