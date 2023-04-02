@@ -10,39 +10,10 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# LOAD SETTINGS
-#=================================================
-#REMOVEME? ynh_script_progression --message="Loading installation settings..." --weight=1
-
-#REMOVEME? app=$YNH_APP_INSTANCE_NAME
-
-#REMOVEME? domain=$(ynh_app_setting_get --app=$app --key=domain)
-#REMOVEME? path=$(ynh_app_setting_get --app=$app --key=path)
-#REMOVEME? admin=$(ynh_app_setting_get --app=$app --key=admin)
-#REMOVEME? #REMOVEME? install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
-#REMOVEME? port=$(ynh_app_setting_get --app=$app --key=port)
-#REMOVEME? data_dir=$(ynh_app_setting_get --app=$app --key=data_dir)
-
-#=================================================
 # CHECK VERSION
 #=================================================
-ynh_script_progression --message="Checking version..." --weight=1
 
 upgrade_type=$(ynh_check_app_version_changed)
-
-#=================================================
-# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
-#=================================================
-#REMOVEME? ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=5
-
-# Backup the current version of the app
-#REMOVEME? ynh_backup_before_upgrade
-#REMOVEME? ynh_clean_setup () {
-	# Restore it if the upgrade fails
-#REMOVEME? 	ynh_restore_upgradebackup
-}
-# Exit if an error occurs during the execution of the script
-#REMOVEME? ynh_abort_if_errors
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -52,56 +23,6 @@ upgrade_type=$(ynh_check_app_version_changed)
 ynh_script_progression --message="Stopping a systemd service..." --weight=1
 
 ynh_systemd_action --service_name=$app --action="stop"
-
-#=================================================
-# ENSURE DOWNWARD COMPATIBILITY
-#=================================================
-ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
-
-# If install_dir doesn't exist, create it
-if [ -z "$install_dir" ]; then
-#REMOVEME? 	install_dir=/var/www/$app
-#REMOVEME? 	ynh_app_setting_set --app=$app --key=install_dir --value=$install_dir
-fi
-
-# If public_path doesn't exist, create it
-if [ -z "$data_dir" ]; then
-	data_dir=/home/yunohost.app/$app
-	mkdir -p $data_dir/{Podcasts,Playlists}
-	chmod 764 "$data_dir"
-	chmod -R o-rwx "$data_dir"
-	chown -R $app:www-data "$data_dir"
-#REMOVEME? 	ynh_app_setting_set --app=$app --key=data_dir --value=$data_dir
-	cp -a "/home/yunohost.$app" "$data_dir"
-fi
-
-# Cleaning legacy permissions
-#REMOVEME? if ynh_legacy_permissions_exists; then
-#REMOVEME? 	ynh_legacy_permissions_delete_all
-
-	ynh_app_setting_delete --app=$app --key=is_public
-fi
-
-# Rename legacy folder to proper location
-if [[ ! -e /home/yunohost.app/$app ]] && [[ -e /home/yunohost.$app ]]
-then
-    mkdir -p /home/yunohost.app/
-    mv /home/yunohost.$app /home/yunohost.app/$app
-fi
-
-mkdir -p $data_dir/{Podcasts,Playlists}
-
-chmod 764 "$data_dir"
-chmod -R o-rwx "$data_dir"
-chown -R $app:www-data "$data_dir"
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-#REMOVEME? ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
-
-# Create a dedicated user (if not existing)
-#REMOVEME? ynh_system_user_create --username=$app --home_dir="$install_dir"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -118,13 +39,6 @@ fi
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
 chown -R $app:www-data "$install_dir"
-
-#=================================================
-# UPGRADE DEPENDENCIES
-#=================================================
-#REMOVEME? ynh_script_progression --message="Upgrading dependencies..." --weight=4
-
-#REMOVEME? ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # NGINX CONFIGURATION
@@ -182,7 +96,7 @@ chown $app $install_dir/transcode
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Updating a configuration file..." --weight=1
+#ynh_script_progression --message="Updating a configuration file..." --weight=1
 
 #ynh_add_config --template="../conf/systemd-sysconfig" --destination="/etc/default/$app"
 #chmod 600 "/etc/default/$app"
@@ -241,13 +155,6 @@ yunohost service add $app --description="Airsonic daemon" --log="$install_dir/$a
 ynh_script_progression --message="Starting a systemd service..." --weight=12
 
 ynh_systemd_action --service_name=$app --action="start" --log_path="$install_dir/airsonic.log" --line_match="Started Application in"
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-#REMOVEME? ynh_script_progression --message="Reloading NGINX web server..." --weight=1
-
-#REMOVEME? ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT
