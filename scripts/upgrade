@@ -112,7 +112,7 @@ then
 	ynh_script_progression --message="Upgrading source files..." --weight=94
 
 	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$final_path"
+	ynh_setup_source --dest_dir="$final_path" --keep="airsonic.properties"
 fi
 
 chmod 750 "$final_path"
@@ -184,13 +184,13 @@ chown $app $final_path/transcode
 #=================================================
 ynh_script_progression --message="Updating a configuration file..." --weight=1
 
-ynh_add_config --template="../conf/systemd-sysconfig" --destination="/etc/default/$app"
-chmod 600 "/etc/default/$app"
-chown $app:$app "/etc/default/$app"
+#ynh_add_config --template="../conf/systemd-sysconfig" --destination="/etc/default/$app"
+#chmod 600 "/etc/default/$app"
+#chown $app:$app "/etc/default/$app"
 
-ynh_add_config --template="../conf/airsonic.properties" --destination="$final_path/airsonic.properties"
-chmod 600 "$final_path/airsonic.properties"
-chown $app:$app "$final_path/airsonic.properties"
+#ynh_add_config --template="../conf/airsonic.properties" --destination="$final_path/airsonic.properties"
+#chmod 600 "$final_path/airsonic.properties"
+#chown $app:$app "$final_path/airsonic.properties"
 
 #=================================================
 # SETUP SYSTEMD
