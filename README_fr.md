@@ -5,15 +5,16 @@ It shall NOT be edited by hand.
 
 # Airsonic-Advanced pour YunoHost
 
-[![Niveau d'intégration](https://dash.yunohost.org/integration/airsonic.svg)](https://dash.yunohost.org/appci/app/airsonic) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/airsonic.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/airsonic.maintain.svg)  
+[![Niveau d’intégration](https://dash.yunohost.org/integration/airsonic.svg)](https://dash.yunohost.org/appci/app/airsonic) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/airsonic.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/airsonic.maintain.svg)
+
 [![Installer Airsonic-Advanced avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=airsonic)
 
 *[Read this readme in english.](./README.md)*
 
-> *Ce package vous permet d'installer Airsonic-Advanced rapidement et simplement sur un serveur YunoHost.
-Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour savoir comment l'installer et en profiter.*
+> *Ce package vous permet d’installer Airsonic-Advanced rapidement et simplement sur un serveur YunoHost.
+Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour savoir comment l’installer et en profiter.*
 
-## Vue d'ensemble
+## Vue d’ensemble
 
 Airsonic-Advanced est une implémentation plus moderne de la bifurcation d'Airsonic avec plusieurs améliorations clés en termes de performances et de fonctionnalités. Elle ajoute et remplace plusieurs fonctionnalités d'Airsonic.
 
@@ -26,11 +27,11 @@ Si vous avez une bande passante limitée, vous pouvez fixer une limite supérieu
 En plus d'être un serveur de médias en streaming, Airsonic fonctionne très bien comme un jukebox local. L'interface web intuitive, ainsi que les fonctions de recherche et d'indexation, sont optimisées pour une navigation efficace dans les grandes bibliothèques de médias. Airsonic est également livré avec un récepteur de podcasts intégré, avec la plupart des fonctionnalités que vous trouvez dans iTunes.
 
 
-**Version incluse :** 11.0.0~ynh3
+**Version incluse :** 11.0.0~ynh4
 
-## Captures d'écran
+## Captures d’écran
 
-![Capture d'écran de Airsonic-Advanced](./doc/screenshots/screenshot_01.png)
+![Capture d’écran de Airsonic-Advanced](./doc/screenshots/screenshot_01.png)
 
 ## Avertissements / informations importantes
 
@@ -43,8 +44,8 @@ En plus d'être un serveur de médias en streaming, Airsonic fonctionne très bi
 
 ## Documentations et ressources
 
-* Documentation officielle de l'admin : <https://airsonic.github.io/docs/>
-* Dépôt de code officiel de l'app : <https://github.com/airsonic-advanced/airsonic-advanced>
+* Documentation officielle de l’admin : <https://airsonic.github.io/docs/>
+* Dépôt de code officiel de l’app : <https://github.com/airsonic-advanced/airsonic-advanced>
 * Documentation YunoHost pour cette app : <https://yunohost.org/app_airsonic>
 * Signaler un bug : <https://github.com/YunoHost-Apps/airsonic_ynh/issues>
 
@@ -60,4 +61,4 @@ ou
 sudo yunohost app upgrade airsonic -u https://github.com/YunoHost-Apps/airsonic_ynh/tree/testing --debug
 ```
 
-**Plus d'infos sur le packaging d'applications :** <https://yunohost.org/packaging_apps>
+**Plus d’infos sur le packaging d’applications :** <https://yunohost.org/packaging_apps>

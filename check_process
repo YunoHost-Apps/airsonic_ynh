@@ -12,7 +12,6 @@
 		setup_private=1
 		setup_public=1
 		upgrade=1
-		upgrade=1	from_commit=72d530415c016b23b6ba62085272957b04d2cca6
 		# 10.6.2~ynh3
 		upgrade=1	from_commit=6ca76697a8f8da7419eb490aa435649f1b9d96c2
 		backup_restore=1
@@ -23,6 +22,6 @@
 Email=
 Notification=none
 ;;; Upgrade options
-	; commit=72d530415c016b23b6ba62085272957b04d2cca6
-		name=10.5.0~ynh2 on March 2020
+	; commit=6ca76697a8f8da7419eb490aa435649f1b9d96c2
+		name=10.6.2~ynh3
 		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&language=fr&is_public=1&password=pass&port=666&
