@@ -5,7 +5,7 @@
 #=================================================
 
 # dependencies used by the app (must be on a single line)
-pkg_dependencies="openjdk-11-jre ffmpeg"
+#REMOVEME? pkg_dependencies="openjdk-11-jre ffmpeg"
 
 #=================================================
 # PERSONAL HELPERS

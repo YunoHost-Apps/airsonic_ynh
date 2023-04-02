@@ -14,75 +14,75 @@ source /usr/share/yunohost/helpers
 # MANAGE SCRIPT FAILURE
 #=================================================
 
-ynh_clean_setup () {
+#REMOVEME? ynh_clean_setup () {
 	true
 }
 # Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
+#REMOVEME? ynh_abort_if_errors
 
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..." --weight=1
+#REMOVEME? ynh_script_progression --message="Loading installation settings..." --weight=1
 
-app=$YNH_APP_INSTANCE_NAME
+#REMOVEME? app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get --app=$app --key=domain)
-path_url=$(ynh_app_setting_get --app=$app --key=path)
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-datadir=$(ynh_app_setting_get --app=$app --key=datadir)
+#REMOVEME? domain=$(ynh_app_setting_get --app=$app --key=domain)
+#REMOVEME? path=$(ynh_app_setting_get --app=$app --key=path)
+#REMOVEME? #REMOVEME? install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
+#REMOVEME? data_dir=$(ynh_app_setting_get --app=$app --key=data_dir)
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
 #=================================================
-ynh_script_progression --message="Validating restoration parameters..." --weight=1
+#REMOVEME? ynh_script_progression --message="Validating restoration parameters..." --weight=1
 
-test ! -d $final_path \
-	|| ynh_die --message="There is already a directory: $final_path "
+#REMOVEME? test ! -d $install_dir \
+	|| ynh_die --message="There is already a directory: $install_dir "
 
 #=================================================
 # STANDARD RESTORATION STEPS
 #=================================================
 # RECREATE THE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Recreating the dedicated system user..." --weight=1
+#REMOVEME? ynh_script_progression --message="Recreating the dedicated system user..." --weight=1
 
 # Create the dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir="$final_path"
+#REMOVEME? ynh_system_user_create --username=$app --home_dir="$install_dir"
 
 #=================================================
 # RESTORE THE APP MAIN DIR
 #=================================================
 ynh_script_progression --message="Restoring the app main directory..." --weight=1
 
-ynh_restore_file --origin_path="$final_path"
+ynh_restore_file --origin_path="$install_dir"
 
-chmod 750 "$final_path"
-chmod -R o-rwx "$final_path"
-chown -R $app:www-data "$final_path"
+chmod 750 "$install_dir"
+chmod -R o-rwx "$install_dir"
+chown -R $app:www-data "$install_dir"
 
 #=================================================
 # RESTORE THE DATA DIRECTORY
 #=================================================
 ynh_script_progression --message="Restoring the data directory..." --weight=1
 
-ynh_restore_file --origin_path="$datadir" --not_mandatory
+ynh_restore_file --origin_path="$data_dir" --not_mandatory
 
-mkdir -p $datadir
+mkdir -p $data_dir
 
-chmod 764 "$datadir"
-chmod -R o-rwx "$datadir"
-chown -R $app:www-data "$datadir"
+chmod 764 "$data_dir"
+chmod -R o-rwx "$data_dir"
+chown -R $app:www-data "$data_dir"
 
 #=================================================
 # SPECIFIC RESTORATION
 #=================================================
 # REINSTALL DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Reinstalling dependencies..." --weight=43
+#REMOVEME? ynh_script_progression --message="Reinstalling dependencies..." --weight=43
 
 # Define and install dependencies
-ynh_install_app_dependencies $pkg_dependencies
+#REMOVEME? ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # RESTORE THE NGINX CONFIGURATION
@@ -98,19 +98,19 @@ ynh_script_progression --message="Enabling transcode..." --weight=1
 
 ### For details, see https://airsonic.github.io/docs/transcode/
 
-mkdir -p $final_path/transcode
+mkdir -p $install_dir/transcode
 
-if [ -x /usr/bin/ffmpeg -a ! -e $final_path/transcode/ffmpeg ]; then   # Check if 'ffmpeg' is installed, executable and that the symlink doesn't exist
-	ln -s /usr/bin/ffmpeg $final_path/transcode
+if [ -x /usr/bin/ffmpeg -a ! -e $install_dir/transcode/ffmpeg ]; then   # Check if 'ffmpeg' is installed, executable and that the symlink doesn't exist
+	ln -s /usr/bin/ffmpeg $install_dir/transcode
 fi
 
 # FIXME Not sure if 'lame' is needed ?
-if [ -x /usr/bin/lame -a ! -e $final_path/transcode/lame ]; then   # Check if 'lame' is installed, executable and that the symlink doesn't exist
-	ln -s /usr/bin/lame $final_path/transcode
+if [ -x /usr/bin/lame -a ! -e $install_dir/transcode/lame ]; then   # Check if 'lame' is installed, executable and that the symlink doesn't exist
+	ln -s /usr/bin/lame $install_dir/transcode
 fi
 
 # Ensure links belong to the $app user
-chown $app $final_path/transcode
+chown $app $install_dir/transcode
 
 #=================================================
 # RESTORE VARIOUS FILES
@@ -150,14 +150,14 @@ ynh_restore_file --origin_path="/etc/logrotate.d/$app"
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
-yunohost service add $app --description="Airsonic daemon" --log="$final_path/$app.log"
+yunohost service add $app --description="Airsonic daemon" --log="$install_dir/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --weight=12
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/$app.log" --line_match="Started Application in"
+ynh_systemd_action --service_name=$app --action="start" --log_path="$install_dir/$app.log" --line_match="Started Application in"
 
 #=================================================
 # GENERIC FINALIZATION

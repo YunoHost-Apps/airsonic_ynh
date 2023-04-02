@@ -4,7 +4,7 @@
 [Unit]
 Description=__APP__ Media Server
 After=remote-fs.target network.target
-AssertPathExists=__FINALPATH__
+AssertPathExists=__INSTALL_DIR__
 
 [Service]
 Type=simple
@@ -31,7 +31,7 @@ ExecStart=/usr/bin/java \
 #RestrictRealtime=yes
 #DevicePolicy=closed
 #SystemCallFilter=~@clock @debug @module @mount @obsolete @privileged @reboot @setuid @swap
-#ReadWritePaths=__FINALPATH__
+#ReadWritePaths=__INSTALL_DIR__
 
 # You can uncomment the following line if you're not using the jukebox
 # This will prevent airsonic from accessing any real (physical) devices
