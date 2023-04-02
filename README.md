@@ -33,15 +33,6 @@ In addition to being a streaming media server, Airsonic works very well as a loc
 
 ![Screenshot of Airsonic-Advanced](./doc/screenshots/screenshot_01.png)
 
-## Disclaimers / important information
-
-## YunoHost specific features
-
-* YunoHost LDAP accounts supported: **Yes**
-* [Multimedia](https://github.com/YunoHost-Apps/yunohost.multimedia) handled
-* Memory RAM limit set to 256 MB because Airsonic was often killed by lack of RAM (hello OOM killer)
-* See https://www.reddit.com/r/airsonic/comments/doscco/jvm_memory_issues/
-
 ## Documentation and resources
 
 * Official admin documentation: <https://airsonic.github.io/docs/>
