@@ -1,6 +1,3 @@
-# source file https://raw.githubusercontent.com/airsonic/airsonic/master/contrib/airsonic.service
-# install documentation : https://airsonic.github.io/docs/install/war-standalone/
-
 [Unit]
 Description=__APP__ Media Server
 After=remote-fs.target network.target
