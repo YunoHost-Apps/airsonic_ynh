@@ -10,39 +10,10 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# LOAD SETTINGS
-#=================================================
-ynh_script_progression --message="Loading installation settings..." --weight=1
-
-app=$YNH_APP_INSTANCE_NAME
-
-domain=$(ynh_app_setting_get --app=$app --key=domain)
-path_url=$(ynh_app_setting_get --app=$app --key=path)
-admin=$(ynh_app_setting_get --app=$app --key=admin)
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-port=$(ynh_app_setting_get --app=$app --key=port)
-datadir=$(ynh_app_setting_get --app=$app --key=datadir)
-
-#=================================================
 # CHECK VERSION
 #=================================================
-ynh_script_progression --message="Checking version..." --weight=1
 
 upgrade_type=$(ynh_check_app_version_changed)
-
-#=================================================
-# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
-#=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=5
-
-# Backup the current version of the app
-ynh_backup_before_upgrade
-ynh_clean_setup () {
-	# Restore it if the upgrade fails
-	ynh_restore_upgradebackup
-}
-# Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -54,56 +25,6 @@ ynh_script_progression --message="Stopping a systemd service..." --weight=1
 ynh_systemd_action --service_name=$app --action="stop"
 
 #=================================================
-# ENSURE DOWNWARD COMPATIBILITY
-#=================================================
-ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
-
-# If final_path doesn't exist, create it
-if [ -z "$final_path" ]; then
-	final_path=/var/www/$app
-	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
-fi
-
-# If public_path doesn't exist, create it
-if [ -z "$datadir" ]; then
-	datadir=/home/yunohost.app/$app
-	mkdir -p $datadir/{Podcasts,Playlists}
-	chmod 764 "$datadir"
-	chmod -R o-rwx "$datadir"
-	chown -R $app:www-data "$datadir"
-	ynh_app_setting_set --app=$app --key=datadir --value=$datadir
-	cp -a "/home/yunohost.$app" "$datadir"
-fi
-
-# Cleaning legacy permissions
-if ynh_legacy_permissions_exists; then
-	ynh_legacy_permissions_delete_all
-
-	ynh_app_setting_delete --app=$app --key=is_public
-fi
-
-# Rename legacy folder to proper location
-if [[ ! -e /home/yunohost.app/$app ]] && [[ -e /home/yunohost.$app ]]
-then
-    mkdir -p /home/yunohost.app/
-    mv /home/yunohost.$app /home/yunohost.app/$app
-fi
-
-mkdir -p $datadir/{Podcasts,Playlists}
-
-chmod 764 "$datadir"
-chmod -R o-rwx "$datadir"
-chown -R $app:www-data "$datadir"
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
-
-# Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir="$final_path"
-
-#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
@@ -112,19 +33,11 @@ then
 	ynh_script_progression --message="Upgrading source files..." --weight=94
 
 	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$final_path" --keep="airsonic.properties"
+	ynh_setup_source --dest_dir="$install_dir" --keep="airsonic.properties"
 fi
 
-chmod 750 "$final_path"
-chmod -R o-rwx "$final_path"
-chown -R $app:www-data "$final_path"
-
-#=================================================
-# UPGRADE DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Upgrading dependencies..." --weight=4
-
-ynh_install_app_dependencies $pkg_dependencies
+chmod -R o-rwx "$install_dir"
+chown -R $app:www-data "$install_dir"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -147,12 +60,12 @@ ynh_multimedia_addfolder --source_dir="/home/yunohost.app/$app/Playlists" --dest
 # Allow airsonic to write into these directories
 ynh_multimedia_addaccess $app
 
-if ! grep -q "PodcastFolder" $final_path/airsonic.properties; then
-	echo "PodcastFolder=/home/yunohost.multimedia/share/Podcasts" >> $final_path/airsonic.properties
+if ! grep -q "PodcastFolder" $install_dir/airsonic.properties; then
+	echo "PodcastFolder=/home/yunohost.multimedia/share/Podcasts" >> $install_dir/airsonic.properties
 fi
 
-if ! grep -q "PlaylistFolder" $final_path/airsonic.properties; then
-	echo "PlaylistFolder=/home/yunohost.multimedia/share/Playlists" >> $final_path/airsonic.properties
+if ! grep -q "PlaylistFolder" $install_dir/airsonic.properties; then
+	echo "PlaylistFolder=/home/yunohost.multimedia/share/Playlists" >> $install_dir/airsonic.properties
 fi
 
 # Allow Airsonic to write into these directories
@@ -165,32 +78,32 @@ ynh_script_progression --message="Enabling transcode..." --weight=1
 
 ### For details, see https://airsonic.github.io/docs/transcode/
 
-mkdir -p $final_path/transcode
+mkdir -p $install_dir/transcode
 
-if [ -x /usr/bin/ffmpeg -a ! -e $final_path/transcode/ffmpeg ]; then   # Check if 'ffmpeg' is installed, executable and that the symlink doesn't exist
-	ln -s /usr/bin/ffmpeg $final_path/transcode
+if [ -x /usr/bin/ffmpeg -a ! -e $install_dir/transcode/ffmpeg ]; then   # Check if 'ffmpeg' is installed, executable and that the symlink doesn't exist
+	ln -s /usr/bin/ffmpeg $install_dir/transcode
 fi
 
 # FIXME Not sure if 'lame' is needed ?
-if [ -x /usr/bin/lame -a ! -e $final_path/transcode/lame ]; then   # Check if 'lame' is installed, executable and that the symlink doesn't exist
-	ln -s /usr/bin/lame $final_path/transcode
+if [ -x /usr/bin/lame -a ! -e $install_dir/transcode/lame ]; then   # Check if 'lame' is installed, executable and that the symlink doesn't exist
+	ln -s /usr/bin/lame $install_dir/transcode
 fi
 
 # Ensure links belong to the $app user
-chown $app $final_path/transcode
+chown $app $install_dir/transcode
 
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Updating a configuration file..." --weight=1
+#ynh_script_progression --message="Updating a configuration file..." --weight=1
 
 #ynh_add_config --template="../conf/systemd-sysconfig" --destination="/etc/default/$app"
 #chmod 600 "/etc/default/$app"
 #chown $app:$app "/etc/default/$app"
 
-#ynh_add_config --template="../conf/airsonic.properties" --destination="$final_path/airsonic.properties"
-#chmod 600 "$final_path/airsonic.properties"
-#chown $app:$app "$final_path/airsonic.properties"
+#ynh_add_config --template="../conf/airsonic.properties" --destination="$install_dir/airsonic.properties"
+#chmod 600 "$install_dir/airsonic.properties"
+#chown $app:$app "$install_dir/airsonic.properties"
 
 #=================================================
 # SETUP SYSTEMD
@@ -206,16 +119,16 @@ ynh_add_systemd_config
 ynh_script_progression --message="Using multimedia..." --weight=1
 
 # Use multimedia folder if needed
-if ! grep -q "/home/yunohost.multimedia/share/Music" $final_path/db/airsonic.script; then
+if ! grep -q "/home/yunohost.multimedia/share/Music" $install_dir/db/airsonic.script; then
 	ynh_systemd_action --service_name=$app --action="stop"
 
 	# Use multimedia folder
-	ynh_replace_string --match_string="INSERT INTO MUSIC_FOLDER VALUES(0,'/var/music','Music'" --replace_string="INSERT INTO MUSIC_FOLDER VALUES(0,'/home/yunohost.multimedia/share/Music','YunoHost Music'" --target_file="$final_path/db/airsonic.script"
+	ynh_replace_string --match_string="INSERT INTO MUSIC_FOLDER VALUES(0,'/var/music','Music'" --replace_string="INSERT INTO MUSIC_FOLDER VALUES(0,'/home/yunohost.multimedia/share/Music','YunoHost Music'" --target_file="$install_dir/db/airsonic.script"
 
 	ynh_script_progression --message="Restarting a systemd service..." --weight=12
 
 	# Start a systemd service
-	ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/airsonic.log" --line_match="Started Application in"
+	ynh_systemd_action --service_name=$app --action="start" --log_path="$install_dir/airsonic.log" --line_match="Started Application in"
 fi
 
 #=================================================
@@ -226,28 +139,21 @@ fi
 ynh_script_progression --message="Upgrading logrotate configuration..." --weight=1
 
 # Use logrotate to manage app-specific logfile(s)
-ynh_use_logrotate --non-append --logfile="$final_path/$app.log"
+ynh_use_logrotate --non-append --logfile="$install_dir/$app.log"
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
-yunohost service add $app --description="Airsonic daemon" --log="$final_path/$app.log"
+yunohost service add $app --description="Airsonic daemon" --log="$install_dir/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --weight=12
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="$final_path/airsonic.log" --line_match="Started Application in"
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-ynh_script_progression --message="Reloading NGINX web server..." --weight=1
-
-ynh_systemd_action --service_name=nginx --action=reload
+ynh_systemd_action --service_name=$app --action="start" --log_path="$install_dir/airsonic.log" --line_match="Started Application in"
 
 #=================================================
 # END OF SCRIPT
