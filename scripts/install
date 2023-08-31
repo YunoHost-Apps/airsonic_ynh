@@ -33,19 +33,6 @@ ynh_script_progression --message="Configuring NGINX web server..." --weight=1
 ynh_add_nginx_config
 
 #=================================================
-# SPECIFIC SETUP
-#=================================================
-# CREATE DATA DIRECTORY
-#=================================================
-ynh_script_progression --message="Creating a data directory..." --weight=1
-
-mkdir -p $data_dir/{Podcasts,Playlists}
-
-chmod 764 "$data_dir"
-chmod -R o-rwx "$data_dir"
-chown -R $app:www-data "$data_dir"
-
-#=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
 #=================================================
 ynh_script_progression --message="Adding multimedia directories..." --weight=3
@@ -84,11 +71,13 @@ chown $app $install_dir/transcode
 ynh_script_progression --message="Adding a configuration file..." --weight=1
 
 ynh_add_config --template="../conf/systemd-sysconfig" --destination="/etc/default/$app"
+
 chmod 600 "/etc/default/$app"
 chown $app:$app "/etc/default/$app"
 
 # Copy configuration file of airsonic
 ynh_add_config --template="../conf/airsonic.properties" --destination="$install_dir/airsonic.properties"
+
 chmod 600 "$install_dir/airsonic.properties"
 chown $app:$app "$install_dir/airsonic.properties"
 

@@ -1,5 +1,5 @@
 [Unit]
-Description=__APP__ Media Server
+Description=__APP__: Media Server
 After=remote-fs.target network.target
 AssertPathExists=__INSTALL_DIR__
 
