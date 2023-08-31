@@ -5,7 +5,7 @@ name = "Airsonic-Advanced"
 description.en = "Stream and manage your music collection"
 description.fr = "Streamez et gérez votre collection de musique"
 
-version = "11.0.0~ynh4"
+version = "11.0.0~ynh5"
 
 maintainers = []
 
