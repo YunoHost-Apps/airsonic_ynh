@@ -1,0 +1,70 @@
+packaging_format = 2
+
+id = "airsonic"
+name = "Airsonic-Advanced"
+description.en = "Stream and manage your music collection"
+description.fr = "Streamez et gérez votre collection de musique"
+
+version = "11.0.0~ynh5"
+
+maintainers = []
+
+[upstream]
+license = "GPL-3.0-or-later"
+admindoc = "https://airsonic.github.io/docs/"
+code = "https://github.com/airsonic-advanced/airsonic-advanced"
+
+[integration]
+yunohost = ">= 11.2"
+architectures = "all"
+multi_instance = true
+ldap = true
+sso = true
+disk = "50M"
+ram.build = "500M"
+ram.runtime = "50M"
+
+[install]
+    [install.domain]
+    type = "domain"
+
+    [install.path]
+    type = "path"
+    default = "/airsonic"
+
+    [install.init_main_permission]
+    type = "group"
+    default = "visitors"
+
+    [install.admin]
+    type = "user"
+
+[resources]
+        [resources.sources.main]
+        url = "https://github.com/airsonic-advanced/airsonic-advanced/releases/download/11.0.0-SNAPSHOT.20230217142243/airsonic.war"
+        sha256 = "84d37d34586aa2a6335a0214d743a0518e82d7d668e8cc142abb12e20211220f"
+        rename = "airsonic.war"
+        extract = false
+
+    [resources.ports]
+
+    [resources.system_user]
+
+    [resources.install_dir]
+
+    [resources.data_dir]
+    subdirs =["Podcasts", "Playlists"]
+
+    [resources.permissions]
+    main.url = "/"
+
+    [resources.apt]
+    packages = "ffmpeg"
+    packages_from_raw_bash = """
+    debian=$(lsb_release --codename --short)
+    if [[ $debian = "bullseye" ]]; then
+        echo "openjdk-11-jre";
+    elif [[ $debian = "bookworm" ]]; then
+        echo "openjdk-17-jre";
+    fi
+    """

@@ -27,20 +27,11 @@ If you have constrained bandwidth, you may set an upper limit for the bit rate o
 In addition to being a streaming media server, Airsonic works very well as a local jukebox. The intuitive web interface, as well as search and index facilities, are optimized for efficient browsing through large media libraries. Airsonic also comes with an integrated Podcast receiver, with many of the same features as you find in iTunes.
 
 
-**Shipped version:** 11.0.0~ynh4
+**Shipped version:** 11.0.0~ynh5
 
 ## Screenshots
 
 ![Screenshot of Airsonic-Advanced](./doc/screenshots/screenshot_01.png)
-
-## Disclaimers / important information
-
-## YunoHost specific features
-
-* YunoHost LDAP accounts supported: **Yes**
-* [Multimedia](https://github.com/YunoHost-Apps/yunohost.multimedia) handled
-* Memory RAM limit set to 256 MB because Airsonic was often killed by lack of RAM (hello OOM killer)
-* See https://www.reddit.com/r/airsonic/comments/doscco/jvm_memory_issues/
 
 ## Documentation and resources
 

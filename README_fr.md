@@ -27,20 +27,11 @@ Si vous avez une bande passante limitée, vous pouvez fixer une limite supérieu
 En plus d'être un serveur de médias en streaming, Airsonic fonctionne très bien comme un jukebox local. L'interface web intuitive, ainsi que les fonctions de recherche et d'indexation, sont optimisées pour une navigation efficace dans les grandes bibliothèques de médias. Airsonic est également livré avec un récepteur de podcasts intégré, avec la plupart des fonctionnalités que vous trouvez dans iTunes.
 
 
-**Version incluse :** 11.0.0~ynh4
+**Version incluse :** 11.0.0~ynh5
 
 ## Captures d’écran
 
 ![Capture d’écran de Airsonic-Advanced](./doc/screenshots/screenshot_01.png)
-
-## Avertissements / informations importantes
-
-## Caractéristiques spécifiques de YunoHost
-
-* Comptes LDAP supportés par YunoHost : **Oui**
-* Gestion du [Multimédia](https://github.com/YunoHost-Apps/yunohost.multimedia)
-* La limite de mémoire RAM a été fixée à 256 Mo car Airsonic était souvent tué par le manque de RAM (hello OOM killer).
-* Voir https://www.reddit.com/r/airsonic/comments/doscco/jvm_memory_issues/
 
 ## Documentations et ressources
 
