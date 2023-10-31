@@ -37,7 +37,7 @@ En plus d'être un serveur de médias en streaming, Airsonic fonctionne très bi
 
 * Documentation officielle de l’admin : <https://airsonic.github.io/docs/>
 * Dépôt de code officiel de l’app : <https://github.com/airsonic-advanced/airsonic-advanced>
-* Documentation YunoHost pour cette app : <https://yunohost.org/app_airsonic>
+* YunoHost Store: <https://apps.yunohost.org/app/airsonic>
 * Signaler un bug : <https://github.com/YunoHost-Apps/airsonic_ynh/issues>
 
 ## Informations pour les développeurs

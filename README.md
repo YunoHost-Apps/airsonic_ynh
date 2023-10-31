@@ -37,7 +37,7 @@ In addition to being a streaming media server, Airsonic works very well as a loc
 
 * Official admin documentation: <https://airsonic.github.io/docs/>
 * Upstream app code repository: <https://github.com/airsonic-advanced/airsonic-advanced>
-* YunoHost documentation for this app: <https://yunohost.org/app_airsonic>
+* YunoHost Store: <https://apps.yunohost.org/app/airsonic>
 * Report a bug: <https://github.com/YunoHost-Apps/airsonic_ynh/issues>
 
 ## Developer info
