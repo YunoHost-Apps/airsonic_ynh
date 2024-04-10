@@ -61,10 +61,9 @@ ram.runtime = "50M"
     [resources.apt]
     packages = "ffmpeg"
     packages_from_raw_bash = """
-    debian=$(lsb_release --codename --short)
-    if [[ $debian = "bullseye" ]]; then
+    if [[ $YNH_DEBIAN_VERSION == "bullseye" ]]; then
         echo "openjdk-11-jre";
-    elif [[ $debian = "bookworm" ]]; then
+    elif [[ $YNH_DEBIAN_VERSION == "bookworm" ]]; then
         echo "openjdk-17-jre";
     fi
     """
