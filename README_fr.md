@@ -34,7 +34,7 @@ En plus d'être un serveur de médias en streaming, Airsonic fonctionne très bi
 ![Capture d’écran de Airsonic-Advanced](./doc/screenshots/screenshot_01.png)
 
 ## Documentations et ressources
- 
+
 - Documentation officielle de l’admin : <https://airsonic.github.io/docs/>
 - Dépôt de code officiel de l’app : <https://github.com/airsonic-advanced/airsonic-advanced>
 - YunoHost Store : <https://apps.yunohost.org/app/airsonic>
