@@ -3,7 +3,7 @@
 请勿手动编辑。
 -->
 
-# YunoHost 的 Airsonic-Advanced
+# YunoHost 上的 Airsonic-Advanced
 
 [![集成程度](https://dash.yunohost.org/integration/airsonic.svg)](https://dash.yunohost.org/appci/app/airsonic) ![工作状态](https://ci-apps.yunohost.org/ci/badges/airsonic.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/airsonic.maintain.svg)
 
