@@ -15,7 +15,8 @@ admindoc = "https://airsonic.github.io/docs/"
 code = "https://github.com/airsonic-advanced/airsonic-advanced"
 
 [integration]
-yunohost = ">= 11.2"
+yunohost = ">= 11.2.18"
+helpers_version = "2.1"
 architectures = "all"
 multi_instance = true
 ldap = true

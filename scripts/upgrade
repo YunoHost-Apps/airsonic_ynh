@@ -1,58 +1,42 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC START
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# CHECK VERSION
-#=================================================
-
-upgrade_type=$(ynh_check_app_version_changed)
-
-#=================================================
-# STANDARD UPGRADE STEPS
-#=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Stopping a systemd service..." --weight=1
+ynh_script_progression "Stopping $app's systemd service..."
 
-ynh_systemd_action --service_name=$app --action="stop"
+ynh_systemctl --service=$app --action="stop"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
-if [ "$upgrade_type" == "UPGRADE_APP" ]
+# FIXME: this is still supported but the recommendation is now to *always* re-setup the app sources wether or not the upstream sources changed
+if ynh_app_upstream_version_changed
 then
-	ynh_script_progression --message="Upgrading source files..." --weight=94
+	ynh_script_progression "Upgrading source files..."
 
 	# Download, check integrity, uncompress and patch the source from app.src
 	ynh_setup_source --dest_dir="$install_dir" --keep="airsonic.properties"
 fi
 
-chmod -R o-rwx "$install_dir"
-chown -R $app:www-data "$install_dir"
-
+#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod -R o-rwx "$install_dir"
+#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app:www-data "$install_dir"
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=1
+ynh_script_progression "Upgrading NGINX web server configuration..."
 
 # Create a dedicated NGINX config
-ynh_add_nginx_config
+ynh_config_add_nginx
 
-#=================================================
-# SPECIFIC UPGRADE
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
 #=================================================
-ynh_script_progression --message="Adding multimedia directories..." --weight=3
+ynh_script_progression "Adding multimedia directories..."
 
 ynh_multimedia_build_main_dir
 ynh_multimedia_addfolder --source_dir="/home/yunohost.app/$app/Podcasts" --dest_dir="share/Podcasts"
@@ -74,7 +58,7 @@ ynh_multimedia_addaccess $app
 #=================================================
 # ENABLE "TRANSCODE"
 #=================================================
-ynh_script_progression --message="Enabling transcode..." --weight=1
+ynh_script_progression "Enabling transcode..."
 
 ### For details, see https://airsonic.github.io/docs/transcode/
 
@@ -95,68 +79,66 @@ chown $app $install_dir/transcode
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
-#ynh_script_progression --message="Updating a configuration file..." --weight=1
+#ynh_script_progression "Updating configuration..."
 
-#ynh_add_config --template="../conf/systemd-sysconfig" --destination="/etc/default/$app"
+#ynh_config_add --template="systemd-sysconfig" --destination="/etc/default/$app"
 #chmod 600 "/etc/default/$app"
 #chown $app:$app "/etc/default/$app"
 
-#ynh_add_config --template="../conf/airsonic.properties" --destination="$install_dir/airsonic.properties"
+#ynh_config_add --template="airsonic.properties" --destination="$install_dir/airsonic.properties"
 #chmod 600 "$install_dir/airsonic.properties"
 #chown $app:$app "$install_dir/airsonic.properties"
 
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-ynh_script_progression --message="Upgrading systemd configuration..." --weight=1
+ynh_script_progression "Upgrading systemd configuration..."
 
 # Create a dedicated systemd config
-ynh_add_systemd_config
+ynh_config_add_systemd
 
 #=================================================
 # USE MULTIMEDIA
 #=================================================
-ynh_script_progression --message="Using multimedia..." --weight=1
+ynh_script_progression "Using multimedia..."
 
 # Use multimedia folder if needed
 if ! grep -q "/home/yunohost.multimedia/share/Music" $install_dir/db/airsonic.script; then
-	ynh_systemd_action --service_name=$app --action="stop"
+	ynh_systemctl --service=$app --action="stop"
 
 	# Use multimedia folder
-	ynh_replace_string --match_string="INSERT INTO MUSIC_FOLDER VALUES(0,'/var/music','Music'" --replace_string="INSERT INTO MUSIC_FOLDER VALUES(0,'/home/yunohost.multimedia/share/Music','YunoHost Music'" --target_file="$install_dir/db/airsonic.script"
+	ynh_replace --match="INSERT INTO MUSIC_FOLDER VALUES(0,'/var/music','Music'" --replace="INSERT INTO MUSIC_FOLDER VALUES(0,'/home/yunohost.multimedia/share/Music','YunoHost Music'" --file="$install_dir/db/airsonic.script"
 
-	ynh_script_progression --message="Restarting a systemd service..." --weight=12
+	ynh_script_progression "Restarting a systemd service..."
 
 	# Start a systemd service
-	ynh_systemd_action --service_name=$app --action="start" --log_path="$install_dir/airsonic.log" --line_match="Started Application in"
+	ynh_systemctl --service=$app --action="start" --log_path="$install_dir/airsonic.log" --wait_until="Started Application in"
 fi
 
 #=================================================
-# GENERIC FINALIZATION
-#=================================================
 # SETUP LOGROTATE
 #=================================================
-ynh_script_progression --message="Upgrading logrotate configuration..." --weight=1
+ynh_script_progression "Upgrading logrotate configuration..."
 
 # Use logrotate to manage app-specific logfile(s)
-ynh_use_logrotate --non-append --logfile="$install_dir/$app.log"
+ynh_config_add_logrotate "$install_dir/$app.log"
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
+ynh_script_progression "Integrating service in YunoHost..."
 
 yunohost service add $app --description="Airsonic daemon" --log="$install_dir/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..." --weight=12
+ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="$install_dir/airsonic.log" --line_match="Started Application in"
+ynh_systemctl --service=$app --action="start" --log_path="$install_dir/airsonic.log" --wait_until="Started Application in"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Upgrade of $app completed" --last
+ynh_script_progression "Upgrade of $app completed"
