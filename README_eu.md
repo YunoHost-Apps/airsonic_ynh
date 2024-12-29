@@ -5,7 +5,9 @@ EZ editatu eskuz.
 
 # Airsonic-Advanced YunoHost-erako
 
-[![Integrazio maila](https://dash.yunohost.org/integration/airsonic.svg)](https://dash.yunohost.org/appci/app/airsonic) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/airsonic.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/airsonic.maintain.svg)
+[![Integrazio maila](https://apps.yunohost.org/badge/integration/airsonic)](https://ci-apps.yunohost.org/ci/apps/airsonic/)
+![Funtzionamendu egoera](https://apps.yunohost.org/badge/state/airsonic)
+![Mantentze egoera](https://apps.yunohost.org/badge/maintained/airsonic)
 
 [![Instalatu Airsonic-Advanced YunoHost-ekin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=airsonic)
 
@@ -27,7 +29,7 @@ If you have constrained bandwidth, you may set an upper limit for the bit rate o
 In addition to being a streaming media server, Airsonic works very well as a local jukebox. The intuitive web interface, as well as search and index facilities, are optimized for efficient browsing through large media libraries. Airsonic also comes with an integrated Podcast receiver, with many of the same features as you find in iTunes.
 
 
-**Paketatutako bertsioa:** 11.0.0~ynh5
+**Paketatutako bertsioa:** 11.0.20240424015024~ynh1
 
 ## Pantaila-argazkiak
 
