@@ -5,7 +5,9 @@
 
 # YunoHost 上的 Airsonic-Advanced
 
-[![集成程度](https://dash.yunohost.org/integration/airsonic.svg)](https://dash.yunohost.org/appci/app/airsonic) ![工作状态](https://ci-apps.yunohost.org/ci/badges/airsonic.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/airsonic.maintain.svg)
+[![集成程度](https://apps.yunohost.org/badge/integration/airsonic)](https://ci-apps.yunohost.org/ci/apps/airsonic/)
+![工作状态](https://apps.yunohost.org/badge/state/airsonic)
+![维护状态](https://apps.yunohost.org/badge/maintained/airsonic)
 
 [![使用 YunoHost 安装 Airsonic-Advanced](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=airsonic)
 
@@ -27,7 +29,7 @@ If you have constrained bandwidth, you may set an upper limit for the bit rate o
 In addition to being a streaming media server, Airsonic works very well as a local jukebox. The intuitive web interface, as well as search and index facilities, are optimized for efficient browsing through large media libraries. Airsonic also comes with an integrated Podcast receiver, with many of the same features as you find in iTunes.
 
 
-**分发版本：** 11.0.0~ynh5
+**分发版本：** 11.0.20240424015024~ynh1
 
 ## 截图
 
