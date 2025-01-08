@@ -94,7 +94,7 @@ ynh_add_systemd_config
 #=================================================
 ynh_script_progression --message="Setuping application with CURL..." --weight=1
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="$install_dir/$app.log" --line_match="Started Application in"
+ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Started Application in"
 
 # Reload Nginx
 ynh_systemd_action --service_name=nginx --action="reload"
@@ -140,7 +140,7 @@ ynh_replace_string --match_string="INSERT INTO MUSIC_FOLDER VALUES(0,'/var/music
 ynh_script_progression --message="Restarting a systemd service..." --weight=12
 
 # Start a systemd service
-ynh_systemd_action --service_name=$app --action="start" --log_path="$install_dir/airsonic.log" --line_match="Started Application in"
+ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Started Application in"
 
 #=================================================
 # GENERIC FINALIZATION
@@ -165,7 +165,7 @@ yunohost service add $app --description="Airsonic daemon" --log="$install_dir/$a
 ynh_script_progression --message="Starting a systemd service..." --weight=12
 
 # Start a systemd service
-ynh_systemd_action --service_name=$app --action="restart" --log_path="$install_dir/$app.log" --line_match="Started Application in"
+ynh_systemd_action --service_name=$app --action="restart" --log_path=systemd --line_match="Started Application in"
 
 #=================================================
 # END OF SCRIPT

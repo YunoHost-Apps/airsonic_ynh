@@ -45,7 +45,7 @@ ynh_add_config --template="../conf/systemd-sysconfig" --destination="/etc/defaul
 ynh_script_progression --message="Starting a systemd service..." --weight=12
 
 # Start a systemd service
-ynh_systemd_action --service_name=$app --action=start --log_path="$install_dir/airsonic.log" --line_match="Started Application in"
+ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Started Application in"
 
 #=================================================
 # END OF SCRIPT

@@ -128,7 +128,7 @@ if ! grep -q "/home/yunohost.multimedia/share/Music" $install_dir/db/airsonic.sc
 	ynh_script_progression --message="Restarting a systemd service..." --weight=12
 
 	# Start a systemd service
-	ynh_systemd_action --service_name=$app --action="start" --log_path="$install_dir/airsonic.log" --line_match="Started Application in"
+	ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Started Application in"
 fi
 
 #=================================================
@@ -153,7 +153,7 @@ yunohost service add $app --description="Airsonic daemon" --log="$install_dir/$a
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --weight=12
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="$install_dir/airsonic.log" --line_match="Started Application in"
+ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Started Application in"
 
 #=================================================
 # END OF SCRIPT
