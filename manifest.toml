@@ -59,11 +59,4 @@ ram.runtime = "50M"
     main.url = "/"
 
     [resources.apt]
-    packages = "ffmpeg, x264, x265, lame, xmp, bash, fonts-dejavu, gosu"
-    packages_from_raw_bash = """
-    if [[ $YNH_DEBIAN_VERSION == "bullseye" ]]; then
-        echo "openjdk-11-jre";
-    elif [[ $YNH_DEBIAN_VERSION == "bookworm" ]]; then
-        echo "openjdk-17-jre";
-    fi
-    """
+    packages = "ffmpeg, x264, x265, lame, xmp, bash, fonts-dejavu, gosu, openjdk-11-jre\\|openjdk-17-jre"
