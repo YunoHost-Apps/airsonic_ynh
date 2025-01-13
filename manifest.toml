@@ -1,3 +1,5 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/manifest.v2.schema.json
+
 packaging_format = 2
 
 id = "airsonic"
@@ -45,6 +47,9 @@ ram.runtime = "50M"
         sha256 = "84d37d34586aa2a6335a0214d743a0518e82d7d668e8cc142abb12e20211220f"
         rename = "airsonic.war"
         extract = false
+
+        autoupdate.strategy = "latest_github_release"
+        autoupdate.asset = "airsonic.war"
 
     [resources.ports]
 
