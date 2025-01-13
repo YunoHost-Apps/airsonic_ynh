@@ -5,7 +5,9 @@ NON debe editarse manualmente.
 
 # Airsonic-Advanced para YunoHost
 
-[![Nivel de integración](https://dash.yunohost.org/integration/airsonic.svg)](https://dash.yunohost.org/appci/app/airsonic) ![Estado de funcionamento](https://ci-apps.yunohost.org/ci/badges/airsonic.status.svg) ![Estado de mantemento](https://ci-apps.yunohost.org/ci/badges/airsonic.maintain.svg)
+[![Nivel de integración](https://apps.yunohost.org/badge/integration/airsonic)](https://ci-apps.yunohost.org/ci/apps/airsonic/)
+![Estado de funcionamento](https://apps.yunohost.org/badge/state/airsonic)
+![Estado de mantemento](https://apps.yunohost.org/badge/maintained/airsonic)
 
 [![Instalar Airsonic-Advanced con YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=airsonic)
 

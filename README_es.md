@@ -5,7 +5,9 @@ No se debe editar a mano.
 
 # Airsonic-Advanced para Yunohost
 
-[![Nivel de integración](https://dash.yunohost.org/integration/airsonic.svg)](https://dash.yunohost.org/appci/app/airsonic) ![Estado funcional](https://ci-apps.yunohost.org/ci/badges/airsonic.status.svg) ![Estado En Mantención](https://ci-apps.yunohost.org/ci/badges/airsonic.maintain.svg)
+[![Nivel de integración](https://apps.yunohost.org/badge/integration/airsonic)](https://ci-apps.yunohost.org/ci/apps/airsonic/)
+![Estado funcional](https://apps.yunohost.org/badge/state/airsonic)
+![Estado En Mantención](https://apps.yunohost.org/badge/maintained/airsonic)
 
 [![Instalar Airsonic-Advanced con Yunhost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=airsonic)
 
@@ -42,7 +44,7 @@ In addition to being a streaming media server, Airsonic works very well as a loc
 
 ## Información para desarrolladores
 
-Por favor enviar sus correcciones a la [`branch testing`](https://github.com/YunoHost-Apps/airsonic_ynh/tree/testing
+Por favor enviar sus correcciones a la [rama `testing`](https://github.com/YunoHost-Apps/airsonic_ynh/tree/testing).
 
 Para probar la rama `testing`, sigue asÍ:
 
