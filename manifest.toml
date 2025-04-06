@@ -7,7 +7,7 @@ name = "Airsonic-Advanced"
 description.en = "Stream and manage your music collection"
 description.fr = "Streamez et gérez votre collection de musique"
 
-version = "11.0.0~ynh5"
+version = "11.0.0~ynh6"
 
 maintainers = []
 
@@ -46,8 +46,8 @@ ram.runtime = "50M"
 
 [resources]
     [resources.sources.main]
-    url = "https://github.com/airsonic-advanced/airsonic-advanced/releases/download/11.0.0-SNAPSHOT.20230217142243/airsonic.war"
-    sha256 = "84d37d34586aa2a6335a0214d743a0518e82d7d668e8cc142abb12e20211220f"
+    url = "https://github.com/airsonic-advanced/airsonic-advanced/releases/download/11.0.0-SNAPSHOT.20240424015024/airsonic.war"
+    sha256 = "7c35acb52d3be81797139e5a39e312499bae62138b2d501f8d1199467324b33e"
     rename = "airsonic.war"
     extract = false
 

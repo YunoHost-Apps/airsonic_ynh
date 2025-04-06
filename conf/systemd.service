@@ -10,15 +10,10 @@ Group=__APP__
 Environment="JAVA_OPTS=-Xmx256m"
 Environment="JAVA_ARGS="
 EnvironmentFile=-/etc/default/__APP__
-ExecStart=/usr/bin/java \
-          $JAVA_OPTS \
-          -Dairsonic.home=${AIRSONIC_HOME} \
-          -Dserver.servlet.context-path=${CONTEXT_PATH} \
-          -Dserver.port=${PORT} \
-          -jar ${JAVA_JAR} $JAVA_ARGS
+ExecStart=/usr/bin/java $JAVA_OPTS -Dairsonic.home=${AIRSONIC_HOME} -Dserver.servlet.context-path=${CONTEXT_PATH} -Dserver.port=${PORT} -jar ${JAVA_JAR} $JAVA_ARGS
 
-# See https://www.freedesktop.org/software/systemd/man/systemd.exec.html
-# for details
+# Sandboxing options to harden security
+# Details for these options: https://www.freedesktop.org/software/systemd/man/systemd.exec.html
 #DeviceAllow=char-alsa rw
 #NoNewPrivileges=yes
 #PrivateTmp=yes
